@@ -1,20 +1,92 @@
 [
   {
     "id": 1,
-    "title": "INICIAL CAMBIADO",
-    "description": "TEST INICIAL CAMBIADO",
-    "price": 200,
-    "thumbnail": "Sin imagen",
-    "code": "INICIAL CAMBIADO",
-    "stock": 25
+    "title": "Producto 1",
+    "description": "Producto 1",
+    "price": 100,
+    "thumbnail": "./imagen1.jpg",
+    "code": "P0001",
+    "stock": 10
   },
   {
     "id": 2,
-    "title": "Producto Prueba",
-    "description": "Este es un producto de prueba",
+    "title": "Producto 2",
+    "description": "Producto 2",
     "price": 200,
-    "thumbnail": "Sin imagen",
-    "code": "abc123",
-    "stock": 25
-  }
+    "thumbnail": "./imagen2.jpg",
+    "code": "P0002",
+    "stock": 20
+  },
+  {
+    "id": 3,
+    "title": "Producto 3",
+    "description": "Producto 3",
+    "price": 300,
+    "thumbnail": "./imagen3.jpg",
+    "code": "P0003",
+    "stock": 30
+  },
+  {
+    "id": 4,
+    "title": "Producto 4",
+    "description": "Producto 4",
+    "price": 400,
+    "thumbnail": "./imagen4.jpg",
+    "code": "P0004",
+    "stock": 40
+  },
+  {
+    "id": 5,
+    "title": "Producto 5",
+    "description": "Producto 5",
+    "price": 500,
+    "thumbnail": "./imagen5.jpg",
+    "code": "P0005",
+    "stock": 50
+  },
+  {
+    "id": 6,
+    "title": "Producto 6",
+    "description": "Producto 6",
+    "price": 600,
+    "thumbnail": "./imagen6.jpg",
+    "code": "P0006",
+    "stock": 60
+  },
+  {
+    "id": 7,
+    "title": "Producto 7",
+    "description": "Producto 7",
+    "price": 700,
+    "thumbnail": "./imagen7.jpg",
+    "code": "P0007",
+    "stock": 70
+  },
+  {
+    "id": 8,
+    "title": "Producto 8",
+    "description": "Producto 8",
+    "price": 800,
+    "thumbnail": "./imagen8.jpg",
+    "code": "P0008",
+    "stock": 80
+  },
+  {
+    "id": 9,
+    "title": "Producto 9",
+    "description": "Producto 9",
+    "price": 900,
+    "thumbnail": "./imagen9.jpg",
+    "code": "P0009",
+    "stock": 90
+  },
+  {
+    "id": 10,
+    "title": "Producto 10",
+    "description": "Producto 10",
+    "price": 1000,
+    "thumbnail": "./imagen10.jpg",
+    "code": "P0010",
+    "stock": 100
+  }  
 ]

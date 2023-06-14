@@ -1,8 +1,8 @@
 // Constante fs para el manejo de archivos
-const fs = require('fs');
+import fs from 'fs';
 
 // Clase principal ProductManager
-class ProductManager {
+export default class ProductManager {
     
     constructor(path) {
         this.products = []
@@ -78,7 +78,7 @@ class ProductManager {
         }
     }
 
-    // Método para obtener un producto meduante su ID
+    // Método para obtener un producto mediante su ID
     getProductById(ID) {
 
         try {
@@ -90,7 +90,8 @@ class ProductManager {
         if ( this.products.some( p => p.id === ID) ) {
             return this.products.find(p => p.id === ID)
         } else {
-            return `ID: ${ID} Not found`
+            console.log( `ID: ${ID} Not found` );
+            return false
         }
 
     }
@@ -145,19 +146,25 @@ class ProductManager {
         }
 
     }
+
+    async deleteAllProducts(){
+        try {
+            if(fs.existsSync(this.path)){
+                await fs.promises.unlink(this.path)
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
   
 }
 
 /*
-(
-    async () => {
-  */  
-
 // TESTING propuesto en documento "Clase 2 - Testing de Entregable"
 console.log("TESTING propuesto en documento -- Testing de Entregable\n\n");
 
 // Instancia 1 de clase definida
-const instancia1 = new ProductManager('./Entrega2/products.json')
+const instancia1 = new ProductManager('./products.json')
 
 console.log(`Listado de productos. Vacío o recuperando los productos del archivo.
 ======================================================`)
@@ -226,29 +233,4 @@ console.log(`Listado de productos. Ver producto borrado
 ======================================================`);
 console.log( instancia1.getProducts() );
 console.log(`======================================================`);
-
-
-// TESTING ADICIONAL - Segunda instancia de la clase
-console.log("\n\nTESTING ADICIONAL\n\n");
-const instancia2 = new ProductManager('./Entrega2/products.json')
-
-
-console.log("\nCarga producto repetido\n======================================================");
-// Carga de producto repetido. Se rechaza por código repetido.
-
-instancia2.addProduct(
-    {
-        title: "Producto Prueba",
-        description: "Este es un producto de prueba",
-        price: 200,
-        thumbnail: "Sin imagen",
-        code: "abc123",
-        stock: 25
-    }
-    )
-    
-console.log("======================================================\n");
-
-console.log( instancia2.getProducts() );
-
-//})()
+*/
