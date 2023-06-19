@@ -27,7 +27,7 @@ app.get('/products', async(req, res) => {
             products = productManager.getProducts().slice(0,limit)
         }
 
-        if(products){
+        if(products.length){
             res.status(200).json({ message: 'Products found', products })
             // res.status(200).json(product)
         } else {
