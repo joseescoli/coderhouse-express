@@ -20,7 +20,7 @@ router.get('/api/products', async(req, res) => {
             }
 
             if(products.length){
-                res.status(200).json({ message: 'Products found', products })
+                res.status(200).json({ message: products.length===1 ? products.length + ' Product found': products.length + ' Products found', products })
                 // res.status(200).json(product)
             } else {
                 res.status(400).send('Products not found')
@@ -54,15 +54,18 @@ router.get('/api/products/:pid', async(req, res) => {
 router.post('/api/products', fieldValidator , async (req, res)=>{
     try {
         const { title, description, code, price, stock, category } = req.body
-        const thumbnails = String([...req.body.thumbnails]) || []
+        const thumbnails = []
 
+        if ( req.body.thumbnails )
+            thumbnails.push(...req.body.thumbnails)
+        
         const product = { title, description, code, price, stock, category, thumbnails }
 
-        const newProduct = productManager.addProduct(product);
+        const newProduct = await productManager.addProduct(product);
         if(newProduct)
             res.status(200).json("Product added!");
         else
-            res.status(404).json({ message: "Invalid product!" });
+            res.status(404).json({ message: "Invalid product attributes. Verify all fields are complete and avoid duplicate code!" });
     } catch (error) {
         res.status(404).json({ message: error.message });
     }
@@ -70,16 +73,31 @@ router.post('/api/products', fieldValidator , async (req, res)=>{
 
 router.put('/api/products/:pid', async(req, res) => {
     try {
-        const pid = Number(req.params.pid);
-        if ( isNaN(pid) )
-            res.status(400).json({ message: 'Product ID must be a number!' })
+        if ( !req.params.pid )
+            res.status(400).json({ message: 'Product ID error or not defined in URL!' })
         else {
-            const product = { id: pid, ...req.body };
-            const update = await productManager.updateProduct(product);
-            if(update)
-                res.send(`Product updated successfully!`)
-            else
-                res.status(404).send('Product not found')
+            if ( isNaN( Number( req.params.pid) ) )
+                res.status(400).json({ message: 'Product ID must be a number!' })
+            else {
+                const pid = Number(req.params.pid)
+                const updateFields = {}
+                if ( req.body.title) updateFields.product = String(req.body.title)
+                if ( req.body.description) updateFields.description = String(req.body.description)
+                if ( req.body.code) updateFields.code = String(req.body.code)
+                if ( req.body.price) updateFields.price = parseFloat(req.body.price)
+                if ( req.body.stock ) updateFields.stock = Number(req.body.stock)
+                if ( req.body.category ) updateFields.category = String(req.body.category)
+                if ( req.body.thumbnails ) updateFields.thumbnails = [req.body.thumbnails]
+
+                const product = { id: pid, ...updateFields };
+                const update = await productManager.updateProduct(product);
+                if(update) {
+                    const fields = Object.keys(updateFields).length
+                    res.send(`Product updated successfully! ${fields} ${fields === 1 ? ' attribute changed.' : ' attributes changed.'}`)
+                }
+                else
+                    res.status(404).send('Product not found or duplicate product code')
+            }
         }
     } catch (error) {
         res.status(404).json({ message: error.message });

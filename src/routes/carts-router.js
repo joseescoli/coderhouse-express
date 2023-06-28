@@ -64,7 +64,7 @@ router.post('/api/carts/:cid/product/:pid', async (req, res)=>{
             res.status(400).json({ message: 'Product ID must be a number!' })
 
         if ( !isNaN(cid) && !isNaN(pid)){
-            const newCart = cartManager.updateCart(cid, pid, "add");
+            const newCart = await cartManager.updateCart(cid, pid, "add");
             if(newCart)
                 res.status(200).json("Product added to cart!");
             else
@@ -86,7 +86,7 @@ router.delete('/api/carts/:cid/product/:pid', async (req, res)=>{
             res.status(400).json({ message: 'Product ID must be a number!' })
 
         if ( !isNaN(cid) && !isNaN(pid)){
-            const newCart = cartManager.updateCart(cid, pid, "remove");
+            const newCart = await cartManager.updateCart(cid, pid, "remove");
             if(newCart)
                 res.status(200).json("Product removed from cart!");
             else

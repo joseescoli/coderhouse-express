@@ -1,6 +1,8 @@
 // Constante fs para el manejo de archivos
 import fs from 'fs';
 import prodmanager from '../manager/ProductManager.js'
+import { __dirname } from '../path.js';
+const prodList = new prodmanager( __dirname + '/fs/products.json')
 
 // Clase principal CartManager
 export default class CartManager {
@@ -102,43 +104,67 @@ export default class CartManager {
         try {   this.getCarts()  }
         catch (error) { console.log(error)  }
 
-        const prodExist = prodmanager.getProductById(pid) || 0
+        // Verifica si existe el producto
+        const prodExist = prodList.getProductById(pid)
         if ( prodExist ) {
 
+            // Consigue el index del arreglo de carritos
             const index = this.getCartByIndex(cid)
 
+                // Comprueba si existe el carrito
                 if ( index >= 0 ) {
                     const prods = [...this.carts[index].products]
                     
+                    // Obtiene el índice del arreglo de producto y cantidad dentro del carrito
                     const pindex = prods.findIndex( p => p.product === pid)
+
+                    // Verifica si existe el producto en el carrito
                     if ( pindex >= 0 ) {
+
+                        // Verifica si se lanzó la llamada para agregar el producto
                         if ( action === "add" ) {
+
+                            // Comprueba que el carrito pueda agregar el producto si no se superó el stock
                             if ( this.carts[index].products[pindex].quantity < prodExist.stock )
                                 this.carts[index].products[pindex].quantity++
                             else {
-                                console.log( `Product ID: ${pid} out of stock!` );
+                                console.log( `Product ID: ${pid} out of stock!. Max: ${prodExist.stock}` );
                                 return false
                             }
                         } else {
+                            // Por el caso contrario se considera haberse lanzado la llamada para quitar el producto del carrito
+
+                            // Comprueba si el producto en cuestión posee stock
                             if ( prodExist.stock > 0 ) {
-                                if ( this.carts[index].products[pindex].quantity > 0 )
+
+                                // Se comprueba que el carrito tenga ingresada la cantidad del producto superior a 1 para poder restarse
+                                if ( this.carts[index].products[pindex].quantity > 1 )
                                     this.carts[index].products[pindex].quantity--
                                 else
+                                // Caso contrario, de comprobarse que la cantidad del producto es 1, se elimina el objeto relacionado al producto dentro del arreglo de productos
                                     this.carts[index].products.splice(pindex, 1)
                             }
-                            else
-                                console.log( `Product ID: ${pid} out of stock!` );
-                        }
-                    } else {
-                        if ( action === "add" ) {
-                            if ( prodExist.stock > 0 )
-                                this.carts[index].products.push({product: pid, quantity: 1})
                             else {
+                                // Se quita, en caso de presentarse algún caso de adulterio del archivo o bug, el objeto relacionado al producto dentro del arreglo de productos en caso que el producto no tenga stock
+                                this.carts[index].products.splice(pindex, 1)
                                 console.log( `Product ID: ${pid} out of stock!` );
                                 return false
                             }
                         }
-                        else {
+                    } else {
+                        // Al no encontrarse el producto en el carrito y llamarse a la operación de agregado de producto se incorpora el ID y la cantidad en 1
+                        if ( action === "add" ) {
+                            
+                            // Todo lo anterior dicho sólo si el producto posee stock
+                            if ( prodExist.stock > 0 )
+                                this.carts[index].products.push({product: pid, quantity: 1})
+                                else {
+                                    console.log( `Product ID: ${pid} out of stock!` );
+                                    return false
+                                }
+                            }
+                            else {
+                            // Al no encontrarse el producto en el carrito y llamarse a la operación de quitado del producto se da aviso de lo incompatible
                             console.log( `Product ID: ${pid} not present in cart!` );
                             return false
                         }
@@ -150,6 +176,8 @@ export default class CartManager {
                     console.log( `Cart ID: ${cid} not found!` );
                     return false
                 }
+        } else {
+            return false
         }
 
     }

@@ -19,11 +19,11 @@ export default class ProductManager {
     }
 
     #allInfoCheck ( prod ) {
-        return !!prod.title && !!prod.description && !!prod.price && !!prod.code && !!prod.thumbnail && !!prod.stock && !!prod.category && !!prod.status
+        return !!prod.title && !!prod.description && !!prod.price && !!prod.code && !!prod.stock && !!prod.category
     }
 
     #duplicateCode ( code ) {
-        return this.products.some( p => p.code !== code)
+        return !this.products.some( p => p.code === code)
     }
     
     
@@ -53,20 +53,17 @@ export default class ProductManager {
         }
     }
     // Método para cargar productos enviado como objeto
-    addProduct(prod) {
+    async addProduct(prod) {
     
-        try {
-            this.getProducts()
-        } catch (error) {
-            console.log(error)
-        }
+        try {   this.getProducts()  }
+        catch (error) { console.log(error)  }
 
-        if ( this.#duplicateCode (prod.code) || this.products.length === 0 ) {
+        if ( this.#duplicateCode(prod.code) || this.products.length === 0 ) {
             if ( this.#allInfoCheck( prod ) ) {
                 this.#id = this.#lastId() + 1
 
-                const producto = { id: this.#id, status: true, ...prod }
-                this.products.push( producto )
+                const product = { id: this.#id, status: true, ...prod }
+                this.products.push( product )
                 this.#saveProducts()
                 return true
             } else {
@@ -91,7 +88,7 @@ export default class ProductManager {
         if ( this.products.some( p => p.id === ID) ) {
             return this.products.find(p => p.id === ID)
         } else {
-            console.log( `ID: ${ID} Not found` );
+            console.log( `Product ID: ${ID} Not found` );
             return false
         }
 
