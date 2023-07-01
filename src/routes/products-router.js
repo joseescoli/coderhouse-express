@@ -85,13 +85,20 @@ router.put('/api/products/:pid', async(req, res) => {
             else {
                 const pid = Number(req.params.pid)
                 const updateFields = {}
-                if ( req.body.title) updateFields.product = String(req.body.title)
+                if ( req.body.title) updateFields.title = String(req.body.title)
                 if ( req.body.description) updateFields.description = String(req.body.description)
                 if ( req.body.code) updateFields.code = String(req.body.code)
                 if ( req.body.price) updateFields.price = parseFloat(req.body.price)
                 if ( req.body.stock ) updateFields.stock = Number(req.body.stock)
                 if ( req.body.category ) updateFields.category = String(req.body.category)
-                if ( req.body.thumbnails ) updateFields.thumbnails = [req.body.thumbnails]
+                updateFields.thumbnails = req.body.thumbnails || []
+                if ( req.body.thumbnails )
+                    if ( typeof req.body.thumbnails === 'string')
+                        updateFields.thumbnails = [req.body.thumbnails]
+                        else if ( updateFields.thumbnails.constructor.name === 'Array')
+                            updateFields.thumbnails = req.body.thumbnails
+                        else
+                            updateFields.thumbnails = []
 
                 const product = { id: pid, ...updateFields };
                 const update = await productManager.updateProduct(product);
