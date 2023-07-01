@@ -1,0 +1,23 @@
+<!-- Código innecesario debajo debido a la instalación del módulo "socket.io-client"
+Definiendo dentro del router de productos las dos sentencias debajo se pueden emitir eventos desde el mismo router ante un HTTP GET, POST, etc.
+import { io } from 'socket.io-client';
+const socket = io()
+
+Con la siguiente sentencia se emite el mensaje a capturar por el servidor:
+socket.io.emit('http:post:newProduct')
+
+Debajo hasta el cierre del comentario, todo el código que ya no es necesario del formulario por el reemplazo comentado arriba.
+
+<h2>Realtime product list</h2>
+    <form id="form">
+        <label>Product:</label><input type="text" name="name" id="name">
+        <label>Price:</label><input type="number" name="price" id="price">
+        <input type="submit" value="Send">
+    </form>
+-->
+
+<h2>Realtime product list</h2>
+<p id="products"></p>
+
+<script src="socket.io/socket.io.js"></script>
+<script src="index.js"></script>

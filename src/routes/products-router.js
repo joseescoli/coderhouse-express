@@ -3,8 +3,10 @@ const router = Router();
 import { __dirname } from '../path.js';
 
 import ProductManager from '../manager/ProductManager.js';
-import fieldValidator from '../middlewares/fieldValidator.js';
 const productManager = new ProductManager( __dirname + '/fs/products.json');
+import fieldValidator from '../middlewares/fieldValidator.js';
+import { io } from 'socket.io-client';
+const socket = io()
 
 router.get('/api/products', async(req, res) => {
     try {
@@ -62,10 +64,12 @@ router.post('/api/products', fieldValidator , async (req, res)=>{
         const product = { title, description, code, price, stock, category, thumbnails }
 
         const newProduct = await productManager.addProduct(product);
-        if(newProduct)
+        if(newProduct) {
             res.status(200).json("Product added!");
+            socket.io.emit('http:post:newProduct')
+        }
         else
-            res.status(404).json({ message: "Invalid product attributes. Verify all fields are complete and avoid duplicate code!" });
+            res.status(404).json({ message: "Invalid product attributes. Verify all fields are complete and avoid duplicate code!. [Fields required: title, description, price, code, stock, category]" });
     } catch (error) {
         res.status(404).json({ message: error.message });
     }
