@@ -66,7 +66,7 @@ socketServer.on('connection', (socket) => {
     // Envía el evento "products" a todos los clientes conectados y les pasa la función de todos los productos
     socketServer.emit('products', products);
 
-    socket.on('http:post:newProduct', () => {
+    socket.on('http:ProductsModified', () => {
         socketServer.emit('products', products)
     })
     

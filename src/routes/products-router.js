@@ -66,7 +66,7 @@ router.post('/api/products', fieldValidator , async (req, res)=>{
         const newProduct = await productManager.addProduct(product);
         if(newProduct) {
             res.status(200).json("Product added!");
-            socket.io.emit('http:post:newProduct')
+            socket.io.emit('http:ProductsModified')
         }
         else
             res.status(404).json({ message: "Invalid product attributes. Verify all fields are complete and avoid duplicate code!. [Fields required: title, description, price, code, stock, category]" });
@@ -91,20 +91,18 @@ router.put('/api/products/:pid', async(req, res) => {
                 if ( req.body.price) updateFields.price = parseFloat(req.body.price)
                 if ( req.body.stock ) updateFields.stock = Number(req.body.stock)
                 if ( req.body.category ) updateFields.category = String(req.body.category)
-                updateFields.thumbnails = req.body.thumbnails || []
                 if ( req.body.thumbnails )
                     if ( typeof req.body.thumbnails === 'string')
-                        updateFields.thumbnails = [req.body.thumbnails]
+                        updateFields.thumbnails.push(req.body.thumbnails)
                         else if ( updateFields.thumbnails.constructor.name === 'Array')
                             updateFields.thumbnails = req.body.thumbnails
-                        else
-                            updateFields.thumbnails = []
 
                 const product = { id: pid, ...updateFields };
                 const update = await productManager.updateProduct(product);
                 if(update) {
                     const fields = Object.keys(updateFields).length
                     res.send(`Product updated successfully! ${fields} ${fields === 1 ? ' attribute changed.' : ' attributes changed.'}`)
+                    socket.io.emit('http:ProductsModified')
                 }
                 else
                     res.status(404).send('Product not found or duplicate product code')
@@ -123,8 +121,10 @@ router.delete('/api/products/:pid', async(req, res)=>{
             res.status(400).json({ message: 'Product ID must be a number!' })
         else {
             const prodDel = productManager.deleteProduct(pid);
-            if(prodDel)
+            if(prodDel) {
                 res.send(`Product ID: ${pid} deleted successfully`)
+                socket.io.emit('http:ProductsModified')
+            }
             else
                 res.send(`Product ID: ${pid} not found`)
         }
@@ -138,6 +138,7 @@ router.delete('/api/products', async(req, res)=>{
     try {
         await productManager.deleteAllProducts();
         res.send('Products deleted successfully')
+        socket.io.emit('http:ProductsModified')
     } catch (error) {
         res.status(404).json({ message: error.message });
 
