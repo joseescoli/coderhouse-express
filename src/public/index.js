@@ -35,11 +35,13 @@ form.onsubmit = (e) => {
 // Relación entre el formulario de la vista realTimeProducts y la etiqueta <p> con ID=products
 const productlist = document.getElementById('products');
 
-SocketClient.on('products', (list)=>{
+SocketClient.on('products', (list) => {
+
     let infoProducts = '';
     list.forEach((prod) => {
         infoProducts += `Product: ${prod.title}<br>Price: ${prod.price}<br><br>`
     })
     productlist.innerHTML = infoProducts
     console.log( "Products received from server!" );
+
 })

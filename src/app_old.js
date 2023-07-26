@@ -17,15 +17,15 @@ import { __dirname } from './path.js';
 
 // Módulo Handlebars (vistas)
 import handlebars from 'express-handlebars';
-
-// Módulo WebSocket
 import { Server } from 'socket.io';
 
 // Llamadas de productos para invocar sus métodos
 import { getAllService as prodService } from "./services/products.services.js"
 
+
 // Llamadas de mensajes para invocar sus métodos
 import { getAllService as msgService, createService as msgCreate } from "./services/messages.services.js"
+
 
 // Definición de constante de servidor Express
 const app = express();
@@ -51,9 +51,10 @@ const httpServer = app.listen(PORT, ()=>{
     console.log(`Server started at port: ${PORT}`);
 });
 
-// Anexo de servicio de WebSocket a servidor Express
-const socketServer = new Server(httpServer)
+// Anexo de servidor Express a servicio de WebSocket
+export const socketServer = new Server(httpServer)
 
+/* importar como app controller
 // Configuración y definiciones de servicio WebSocket
 socketServer.on('connection', async (socket) => {
     console.log(`Client connected: ${socket.id} // ${socket.handshake.address} // ${socket.handshake.time}`);
@@ -71,14 +72,17 @@ socketServer.on('connection', async (socket) => {
     // Envía evento "msg1" al cliente conectado
     socket.emit('msg1', 'Connected to server!!')
 
-
-    let products = await prodService()
-    products = products.map(item => item.toJSON())
-
-    app.set("io", socketServer)
-
+    
+    socket.on('http:ProductsModified', async () => {
+        try {
+            socketServer.emit('products', await prodService())
+        } catch (error) {
+            console.log(error);
+        }
+    })
+    
     // Envía el evento "products" a todos los clientes conectados y les pasa la función de todos los productos
-    socketServer.emit( 'products', products );
+    socketServer.emit( 'products', await prodService() );
     
     // Envía el evento "products" a todos los clientes conectados (excepto a sí mismo) y les pasa la función de todos los productos
     // socketServer.broadcast.emit('products', productManager.getProducts())
@@ -86,18 +90,23 @@ socketServer.on('connection', async (socket) => {
     // Envía el evento "messages" a todos los clientes conectados y les pasa la función de todos los mensajes
     socketServer.emit('messages', await msgService() );
     
-    // Registra el evento "newUser" y el servidor registra por console.log el nuevo usuario conectado y envía al chat a todos los usuarios del nuevo usuario conectado (excepto a sí mismo)
+    // Registra el evento "newUser" y el servidor registra por console.log el nuevo usuario conectado
     socket.on('newUser', (user)=>{
         console.log(`${user} is logged in`);
-        socket.broadcast.emit('newUser', user);
     });
+    
     
     // Registra el evento "chat:message" y envía el nuevo mensaje incorporado por otro usuario a todos
     socket.on('chat:message', async (msg)=>{
         await msgCreate(msg);
         socketServer.emit('messages', await msgService());
     });
-        
+    
+    // Registra el evento "newUser" y el servidor envía al chat a todos los usuarios del nuevo usuario conectado (excepto a sí mismo)
+    socket.on('newUser', (user)=>{
+        socket.broadcast.emit('newUser', user);
+    });
+    
     // Registra el evento "chat:typing" y el servidor envía al chat a todos los usuarios el usuario que está escribiendo (excepto a sí mismo)
     socket.on('chat:typing', (data)=>{
         socket.broadcast.emit('chat:typing', data);
@@ -109,3 +118,4 @@ socketServer.on('connection', async (socket) => {
     })
 
 })
+*/
