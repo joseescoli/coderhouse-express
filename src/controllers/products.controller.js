@@ -97,7 +97,7 @@ export const updateController = async (req, res) => {
                 if ( req.body.thumbnails )
                     if ( typeof req.body.thumbnails === 'string')
                         updateFields.thumbnails.push(req.body.thumbnails)
-                        else if ( updateFields.thumbnails.constructor.name === 'Array')
+                        else if ( req.body.thumbnails.constructor.name === 'Array')
                             updateFields.thumbnails = req.body.thumbnails
 
                 const update = await updateService(pid, updateFields);
