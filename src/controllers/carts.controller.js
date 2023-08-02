@@ -1,4 +1,4 @@
-import { getAllService, getByIdService, createService, updateService, deleteByIdService } from "../services/carts.services.js";
+import { getAllService, getByIdService, createService, updateService, deleteByIdService, emptyCartService } from "../services/carts.services.js";
 
 // Ruta TESTING todos los carritos
 export const getAllController = async(req, res) => {
@@ -115,6 +115,26 @@ export const deleteByIdController = async(req, res) => {
             const cartDel = await deleteByIdService(cid);
             if(cartDel)
                 res.send(`Cart ID: ${cid} deleted successfully`)
+            else
+                res.send(`Cart ID: ${cid} not found`)
+        }
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+
+    }
+};
+
+export const emptyCartController = async(req, res) => {
+    try {
+        //const cid = Number(req.params.cid);
+        const cid = req.params.cid
+        //if ( isNaN(cid) )
+        if ( !cid )
+            res.status(400).json({ message: 'Cart ID must be a number!' })
+        else {
+            const emptyCart = await emptyCartService(cid);
+            if(emptyCart)
+                res.send(`Products removed from Cart ID: ${cid} successfully`)
             else
                 res.send(`Cart ID: ${cid} not found`)
         }

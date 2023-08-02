@@ -11,14 +11,58 @@ export default class ProductsDaoMongoDB {
 
   // Método privado para verificar que el código del producto no esté duplicado
   async #duplicateCode ( code ) {
-    const prods = await this.getAllProducts()
+    const prods = await this.getAll()
     return !prods.some( p => p.code === code)
   }
 
   // Método para obtener todos los productos
-  async getAllProducts() {
+  async getAll() {
     try {
       const response = await productsModel.find({});
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  // Método para obtener todos los productos con paginado
+  async getAllProducts(limit, page, sort, query) {
+    try {
+
+      let paginate_filter = {}
+
+      if ( query.name ) {
+        if ( query.name === 'status') {
+          if ( query.value )
+            paginate_filter = { status: 'true' }
+          else
+            paginate_filter = { $or: [{ status: 'false' }, { stock: 0 }] }
+        }
+        else {
+          paginate_filter = { [query.name]: { $regex: String(query.value), $options: 'i' } }
+        }
+      }
+      
+      //paginate_filter = { [query.name]: { $and: { $eq: query.value } } }
+
+      let sorting = 1
+      let response
+
+      if ( sort ) {
+        if( sort === '1' || sort === 'a')
+          sorting = 1
+        else
+          sorting = -1
+
+          response = await productsModel.paginate( paginate_filter,
+            {
+              limit: limit, page: page, sort: { price: sorting }
+            }
+          )
+      }
+      
+      response = await productsModel.paginate( paginate_filter, { limit: limit, page: page } )
+
       return response;
     } catch (error) {
       console.log(error);
@@ -38,7 +82,7 @@ export default class ProductsDaoMongoDB {
   // Método para crear producto enviado como objeto
   async createProduct(obj) {
     try {
-      if ( await this.#duplicateCode(obj.code) || await this.getAllProducts().length === 0 ) {
+      if ( await this.#duplicateCode(obj.code) || await this.getAllProducts().totalDocs === 0 ) {
         if ( this.#allInfoCheck( obj ) ) {
             const product = { status: true, ...obj }
             const response = await productsModel.create(product);

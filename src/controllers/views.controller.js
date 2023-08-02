@@ -1,8 +1,8 @@
-import { getAllService } from "../services/products.services.js";
+import { getAllProds } from "../services/products.services.js";
 
 export const listAllProdsView = async (req, res) => {
     try {
-            const products = await getAllService()
+            const products = await getAllProds()
             //res.status(200).json({ message: products.length===1 ? products.length + ' Product found': products.length + ' Products found', products })
             res.render( 'home', {products: products.map(item => item.toJSON())} )
             // res.redirect(`/home/${products.id}`);

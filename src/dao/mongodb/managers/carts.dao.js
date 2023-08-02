@@ -23,7 +23,7 @@ export default class CartsDaoMongoDB {
   // Método para obtener el objeto carrito mediante su ID
   async getCartById(id) {
     try {
-      const response = await cartsModel.findById(id);
+      const response = await cartsModel.findById(id).populate("products.product");
       return response;
     } catch (error) {
       console.log(error);
@@ -35,6 +35,22 @@ export default class CartsDaoMongoDB {
     try {
       const response = await cartsModel.create(obj);
       return response;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  // Método para vaciar el carrito mediante su ID
+  async emptyCart(id) {
+    try {
+      const cart = await this.getCartById(cid);
+      if(cart) {
+      cart.products = []
+      cart.save()
+      return true
+      } else {
+        return false
+      }
     } catch (error) {
       console.log(error);
     }
@@ -91,19 +107,19 @@ export default class CartsDaoMongoDB {
         // Al no encontrarse el producto en el carrito y llamarse a la operación de agregado de producto se incorpora el ID y la cantidad en 1
         if(action === '+') {
           // Todo lo anterior dicho sólo si el producto posee stock
-          if (product.stock > 0) {
+          if (product.stock > 0 && product.status) {
             cart.products.push({ product, quantity: 1 })
             await cart.save()
             return true
           }
           else {
-            console.log( `Product ID: ${pid} out of stock!` );
+            console.log( `Product ID: ${pid} out of stock or inactive!` );
             return false
           }
         }
         else {
           // Al no encontrarse el producto en el carrito y llamarse a la operación de quitado del producto se da aviso de lo incompatible
-          console.log( `Product ID: ${pid} not present in cart!` );
+          console.log( `Product ID: ${pid} not added to cart!` );
           return false
         }
       }

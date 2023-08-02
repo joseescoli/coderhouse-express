@@ -1,29 +1,78 @@
 // Carga de servicios para llamadas de productos e invocar sus métodos
-import { getAllService, getByIdService, createService, updateService, deleteByIdService, deleteAllService } from "../services/products.services.js";
+import { getAllProds, getAllService, getByIdService, createService, updateService, deleteByIdService, deleteAllService } from "../services/products.services.js";
 
 export const getAllController = async (req, res) => {
     try {
-        const limit = Number(req.query.limit) || 0
-        if ( isNaN(limit) )
-            res.status(400).json({ message: 'limit param must be a number!' })
+        const limit = req.query.limit ? Number(req.query.limit) : 10
+        const page = req.query.page ? Number(req.query.page) : 1
+        let sort = req.query.sort ? String(req.query.sort).toLowerCase() : null
+        const query = {}
+        query.name = req.query.query ? String(req.query.query).toLowerCase() : null
+        if ( query.name && req.query.value )
+            query.value = req.query.value.toLowerCase() === 'true' ? true : req.query.value.toLowerCase() === 'false' ? false : String(req.query.value).toLowerCase()
+        else
+            query.value = null
+
+        if(req.query.sort)
+            if( !( sort === '1' || sort === '-1' || sort === 'a' || sort === 'd') ) sort = null
+
+        if ( isNaN(limit) || isNaN(page) )
+            res.status(400).json({
+                status: 'Error',
+                error: 'limit/page params must be a number!',
+                message: error.message
+
+            })
         else {
 
-            let products = await getAllService();
-            
-            if ( limit ) {
-                products = products.slice(0,limit)
-            }
+            const products = await getAllService(limit, page, sort, query);
 
-            if(products.length){
-                res.status(200).json({ message: products.length===1 ? products.length + ' Product found': products.length + ' Products found', products })
+            let url = `http://${req.hostname}:${req.app.get("port")}/api/products?`
+            //url += req.url
+            
+            let prevLink = (products.hasPrevPage)? `${url + 'page='+products.prevPage}` : null
+            let nextLink = (products.hasNextPage)? `${url + 'page='+products.nextPage}` : null
+
+            let url2 = ''
+            
+            if ( req.query.limit ) `${url2+='&limit='+limit}`
+            if ( req.query.sort ) `${url2+='&sort='+sort}`
+            if ( req.query.query ) `${url2+='&query='+query.name}`
+            if ( req.query.value ) `${url2+='&value='+query.value}`
+
+            prevLink = prevLink ? prevLink += url2 : null
+            nextLink = nextLink ? nextLink += url2 : null
+            
+            if(products.totalDocs){
+                res.status(200).json({
+                    status: 'success',
+                    payload: products.docs,
+                    totalPages: products.totalPages,
+                    prevPage: products.prevPage,
+                    nextPage: products.nextPage,
+                    page: products.page,
+                    hasPrevPage: products.hasPrevPage?true:false,
+                    hasNextPage: products.hasNextPage?true:false,
+                    prevLink: prevLink,
+                    nextLink: nextLink,
+                    records: products.totalDocs
+                })
                 // res.status(200).json(product)
             } else {
-                res.status(400).send('Products not found')
+                res.status(400).json({
+                    status: 'Error',
+                    error: 'Products not found'
+                    //message: error.message
+                })
             }
         }
         
     } catch (error) {
-        res.status(404).json({ message: error.message });
+        res.status(404).json({
+            status: 'Error',
+            error: 'Error getting products!',
+            message: error.message
+        });
     }
 };
 
@@ -62,7 +111,7 @@ export const createController = async (req, res) => {
 
         const newProduct = await createService(product);
         if(newProduct) {
-            let products = await getAllService()
+            let products = await getAllProds()
             products = products.map(item => item.toJSON())
             // Envía el evento "products" a todos los clientes conectados con la lista actualizada de productos
             io.emit('products', products);

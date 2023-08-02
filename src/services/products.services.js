@@ -8,9 +8,18 @@ import { __dirname } from "../path.js";
 const productManager = new ProductManager( __dirname + '/src/dao/fs/data/products.json' )
 */
 
-export const getAllService = async () => {
+export const getAllProds = async () => {
+  try {
+    const response = await prodDao.getAll();
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const getAllService = async (limit, page, sort, query) => {
     try {
-      const response = await prodDao.getAllProducts();
+      const response = await prodDao.getAllProducts(limit, page, sort, query);
       return response;
     } catch (error) {
       console.log(error);

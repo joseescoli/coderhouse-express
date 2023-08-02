@@ -61,5 +61,14 @@ export const deleteAllService = async () => {
   } catch (error) {
     console.log(error);
   }
-  
+
+}
+
+export const emptyCartService = async (cid) => {
+  try {
+    const response = await cartDao.emptyCart(cid);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
 }

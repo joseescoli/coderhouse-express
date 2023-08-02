@@ -1,4 +1,4 @@
-import mongoose, { Mongoose } from 'mongoose';
+import mongoose from 'mongoose';
 
 const cartProdRelSchema = new mongoose.Schema({
     product: {
@@ -14,7 +14,7 @@ const cartProdRelSchema = new mongoose.Schema({
 })
 
 const cartSchema = new mongoose.Schema({
-    products: { type: [cartProdRelSchema], required: true }
+    products: { type: [cartProdRelSchema], required: true, default: [] }
 });
 
 export const cartsModel = mongoose.model('carts', cartSchema);

@@ -51,8 +51,12 @@ const httpServer = app.listen(PORT, ()=>{
     console.log(`Server started at port: ${PORT}`);
 });
 
+app.set("port", PORT)
+
 // Anexo de servicio de WebSocket a servidor Express
 const socketServer = new Server(httpServer)
+
+app.set("io", socketServer)
 
 // Configuración y definiciones de servicio WebSocket
 socketServer.on('connection', async (socket) => {
@@ -74,8 +78,6 @@ socketServer.on('connection', async (socket) => {
 
     let products = await prodService()
     products = products.map(item => item.toJSON())
-
-    app.set("io", socketServer)
 
     // Envía el evento "products" a todos los clientes conectados y les pasa la función de todos los productos
     socketServer.emit( 'products', products );

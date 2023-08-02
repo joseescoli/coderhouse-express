@@ -30,6 +30,7 @@
   "dependencies": {
     "express-handlebars": "^7.0.7",
     "mongoose": "^7.4.0",
+    "mongoose-paginate-v2": "^1.7.31",
     "socket.io": "^4.7.1"
   }
 }
