@@ -41,7 +41,7 @@ export default class CartsDaoMongoDB {
   }
 
   // Método para vaciar el carrito mediante su ID
-  async emptyCart(id) {
+  async emptyCart(cid) {
     try {
       const cart = await this.getCartById(cid);
       if(cart) {
@@ -127,6 +127,78 @@ export default class CartsDaoMongoDB {
       console.log(error);
     }
   }
+
+  // Método para actualizar un carrito por su ID recibiendo el ID de producto a agregar y la cantidad específica a designar
+  async updateCantCart(cid, pid, cant) {
+    try {
+      // Generación de constantes para el tratamiento del producto, carrito y el ID del array de productos a analizar
+      const product = await this.prodManager.getProductById(pid);
+      if ( !product ) return 0
+      else {
+        const cart = await this.getCartById(cid);
+        const existingProduct = cart.products.find(
+        (item) => item.product._id.toString() === product._id.toString()
+        )
+        // Verifica si existe el producto en el carrito
+        if (existingProduct) {
+            // Comprueba que el carrito pueda agregar el producto si no se superó el stock
+            if( cant <= product.stock) {
+              existingProduct.quantity = cant
+              await cart.save()
+              return 1
+            }
+            else {
+              console.log( `Product ID: ${pid} out of stock!. Max: ${product.stock}` );
+              return -1
+            }
+        } else {
+          // Al no encontrarse el producto en el carrito y se incorpora el ID y la cantidad
+          // Todo lo anterior dicho sólo si el producto posee stock
+            if (product.stock > 0 && product.status) {
+              cart.products.push({ product, quantity: cant })
+              await cart.save()
+              return 1
+            }
+            else {
+              console.log( `Product ID: ${pid} out of stock or inactive!` );
+              return -1
+            }
+        }
+    }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+// Método para actualizar un carrito por su ID recibiendo el ID de producto a agregar y la cantidad específica a designar
+async updateProdsCart(cid, prods) {
+  try {
+    // Generación de constantes para el tratamiento del producto, carrito y el ID del array de productos a analizar
+    const products = await this.prodManager.getProductsByIds(prods.ids);
+    if ( products.length === 0) return 0
+    else {
+      await this.emptyCart(cid)
+      const cart = await this.getCartById(cid);
+    // Se verifica que cada producto tenga stock para ser agregado
+    prods.forEach( prod => {
+      
+      if (products.stock > 0 && products.status) {
+        cart.products.push({ product: products.ids, quantity: prods.quantities })
+        cart.save()
+        return 1
+      }
+      else {
+        console.log( `Product ID: ${pid} out of stock or inactive!` );
+        return -1
+      }
+
+    })
+
+  }
+  } catch (error) {
+    console.log(error);
+  }
+}
 
   // Método para eliminar un carrito mediante su ID
   async deleteCart(id) {

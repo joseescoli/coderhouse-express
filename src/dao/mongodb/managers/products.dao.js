@@ -79,6 +79,16 @@ export default class ProductsDaoMongoDB {
     }
   }
 
+  // Método para obtener varios productos mediante ob array de IDs
+  async getProductsByIds(ids) {
+    try {
+      const response = await productsModel.find({_id: ids});
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   // Método para crear producto enviado como objeto
   async createProduct(obj) {
     try {

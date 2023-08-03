@@ -45,6 +45,24 @@ export const updateService = async (cid, pid, action) => {
     }
   }
 
+export const addProdsService = async (cid, prods) => {
+    try {
+      const response = await cartDao.updateProdsCart(cid, prods);
+      return response
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+export const updateProdCantService = async (cid, pid, cant) => {
+    try {
+      const response = await cartDao.updateCantCart(cid, pid, cant);
+      return response
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
 export const deleteByIdService = async (id) => {
     try {
       const response = await cartDao.deleteCart(id);
