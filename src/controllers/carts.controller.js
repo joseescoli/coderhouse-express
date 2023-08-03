@@ -88,36 +88,16 @@ export const updateProdCantController = async (req, res) => {
     }
 };
 
-// Agregado de nuevos productos por array en carrito preexistente por body || PENDIENTE
+// Agregado de nuevos productos por array en carrito preexistente por body
 export const addProdsController = async (req, res) => {
     try {
         const cid = req.params.cid
 
-        const products = [{id: [], quantity: []}]
-        //products.ids = req.body.products
-        //products.quantities = req.body.quantities
+        const products = req.body
 
-        if ( !req.body.products )
-            res.status(400).json({ message: 'Product ID not defined!' })
-            
-        if ( !req.body.quantities )
-            res.status(400).json({ message: 'Product quantity not defined!' })
-        else if ( isNaN(req.body.quantities) )
-            res.status(400).json({ message: 'Product quantity must be a number!' })
-
-        if ( !req.body.products && !req.body.quantities )
-            res.status(400).json({ message: 'Request body information not defined!' })
+        if ( !req.body )
+            res.status(400).json({ message: 'Information missing in body' })
         else {
-                if ( typeof req.body.products === 'string')
-                    products.id.push(req.body.products)
-                    else if ( req.body.products.constructor.name === 'Array')
-                        products.id = req.body.products
-
-                if ( typeof req.body.quantities === 'string')
-                    products.quantity.push(req.body.quantities)
-                    else if ( req.body.quantities.constructor.name === 'Array')
-                        products.quantity = req.body.quantities
-
             const newCart = await addProdsService(cid, products);
             if(newCart)
                 res.status(200).json("Product added to cart!");

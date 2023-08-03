@@ -21,7 +21,7 @@ router.put('/api/carts/:cid/product/:pid', updateProdCantController);
 router.delete('/api/carts/:cid/product/:pid', deleteProdController);
 
 // Agregado de nuevos productos por array en carrito preexistente por body
-router.put('/api/carts/:cid', addProdsController); // PENDIENTE
+router.put('/api/carts/:cid', addProdsController);
 
 // Borrado de carrito preexistente
 //router.delete('/api/carts/:cid', deleteByIdController);

@@ -170,31 +170,20 @@ export default class CartsDaoMongoDB {
     }
   }
 
-// Método para actualizar un carrito por su ID recibiendo el ID de producto a agregar y la cantidad específica a designar
+// Método para actualizar un carrito por su ID recibiendo un arreglo de productos a agregar y la cantidad específica a designar
 async updateProdsCart(cid, prods) {
   try {
     // Generación de constantes para el tratamiento del producto, carrito y el ID del array de productos a analizar
-    const products = await this.prodManager.getProductsByIds(prods.ids);
-    if ( products.length === 0) return 0
+    const cart = await this.getCartById(cid);
+    if ( cart ) {
+    cart.products = prods
+    await cart.save()
+    return true
+    }
     else {
-      await this.emptyCart(cid)
-      const cart = await this.getCartById(cid);
-    // Se verifica que cada producto tenga stock para ser agregado
-    prods.forEach( prod => {
-      
-      if (products.stock > 0 && products.status) {
-        cart.products.push({ product: products.ids, quantity: prods.quantities })
-        cart.save()
-        return 1
-      }
-      else {
-        console.log( `Product ID: ${pid} out of stock or inactive!` );
-        return -1
-      }
-
-    })
-
-  }
+      console.log("Cart not found!");
+      return false
+    }
   } catch (error) {
     console.log(error);
   }
