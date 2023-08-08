@@ -128,7 +128,7 @@ export const updateController = async (req, res) => {
     try {
         const io = req.app.get("io");
 
-        if ( !req.params.pid )
+        if ( !req.params.pid || !isNaN(req.params.pid))
             res.status(400).json({ message: 'Product ID error or not defined in URL!' })
         else {
 //            if ( isNaN( Number( req.params.pid) ) )
@@ -152,7 +152,7 @@ export const updateController = async (req, res) => {
                 const update = await updateService(pid, updateFields);
                 if(update) {
                     const fields = Object.keys(updateFields).length
-                    let products = await getAllService()
+                    let products = await getAllProds()
                     products = products.map(item => item.toJSON())
                     // Envía el evento "products" a todos los clientes conectados con la lista actualizada de productos
                     io.emit('products', products);

@@ -47,8 +47,16 @@ export const updateService = async (cid, pid, action) => {
 
 export const addProdsService = async (cid, prods) => {
     try {
-      const response = await cartDao.updateProdsCart(cid, prods);
-      return response
+      let result = 0
+      //const response = await cartDao.updateProdsCart(cid, prods);
+      await prods.map( async item => {
+        const response = await cartDao.updateCantCart(cid, item.product, item.quantity, 'add')
+          console.log("MAP response: " + response)
+          if ( response === 1 ) result = 1
+          console.log("MAP result: " + result)
+        })
+        console.log("Result: " + result);
+        return (result === 1 ? true : false)
     } catch (error) {
       console.log(error);
     }
@@ -56,7 +64,7 @@ export const addProdsService = async (cid, prods) => {
 
 export const updateProdCantService = async (cid, pid, cant) => {
     try {
-      const response = await cartDao.updateCantCart(cid, pid, cant);
+      const response = await cartDao.updateCantCart(cid, pid, cant, 'overwrite');
       return response
     } catch (error) {
       console.log(error);

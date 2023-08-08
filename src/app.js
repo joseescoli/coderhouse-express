@@ -42,8 +42,8 @@ app.set('view engine', 'handlebars');
 app.set('view options', {layout: 'main'});
 
 // Incluyendo los imports de ruteos de Express
-app.use('/', router_prods)
-app.use('/', router_carts)
+app.use('/api', router_prods)
+app.use('/api', router_carts)
 app.use('/', router_views)
 
 // Inicialización de servicio Express

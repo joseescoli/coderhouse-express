@@ -5,11 +5,11 @@ import fieldValidator from '../middlewares/fieldValidator.js';
 
 const router = Router();
 
-router.get('/api/products', getAllController);
-router.get('/api/products/:pid', getByIdController);
-router.post('/api/products', fieldValidator, createController);
-router.put('/api/products/:pid', updateController)
-router.delete('/api/products/:pid', deleteByIdController);
-router.delete('/api/products', deleteAllController)
+router.get('/products', getAllController);
+router.get('/products/:pid', getByIdController);
+router.post('/products', fieldValidator, createController);
+router.put('/products/:pid', updateController)
+router.delete('/products/:pid', deleteByIdController);
+router.delete('/products', deleteAllController)
 
 export default router;

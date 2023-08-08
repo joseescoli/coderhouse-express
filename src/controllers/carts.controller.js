@@ -42,9 +42,9 @@ export const createController = async (req, res) => {
     try {
             const cart = await createService()
             if(cart)
-                res.status(200).json("Cart added!");
+                res.status(200).json({ status: true, id: cart._id.toJSON(), message: "Cart added!" });
             else
-                res.status(400).json({ message: "Invalid cart!" });
+                res.status(400).json({ status: false, message: "Invalid cart!" });
     } catch (error) {
         res.status(404).json({ message: error.message });
     }
@@ -95,11 +95,25 @@ export const addProdsController = async (req, res) => {
 
         const products = req.body
 
-        if ( !req.body )
-            res.status(400).json({ message: 'Information missing in body' })
+        /*  Ejemplo de BODY a enviar
+        [
+            {"product": "64c01e474f89b7371af4cd35", "quantity": 1},
+            {"product": "64c83088a804867a9d2641ee", "quantity": 2}
+        ]
+        */
+
+        if ( JSON.stringify(req.body) === JSON.stringify({}) )
+            res.status(400).send(`Information missing in body
+        
+                Example below for request body:
+                [
+                    \t{"product": "64c01e474f89b7371af4cd35", "quantity": 1},
+                    \t{"product": "64c83088a804867a9d2641ee", "quantity": 2}
+                ]`
+            )
         else {
             const newCart = await addProdsService(cid, products);
-            if(newCart)
+            if(newCart === 1)
                 res.status(200).json("Product added to cart!");
             else
                 res.status(400).json({ message: "Invalid cart or product!" });
@@ -144,14 +158,14 @@ export const deleteProdController = async (req, res) => {
         //const pid = Number(req.params.pid);
         const pid = req.params.pid
         //if ( isNaN(cid) )
-        if ( !cid )
-            res.status(400).json({ message: 'Cart ID must be a number!' })
+        if ( !req.params.cid || !isNaN(req.params.cid) )
+            res.status(400).json({ message: 'Wrong Cart ID or not defined!' })
         //if ( isNaN(pid) )
-        if ( !pid )
-            res.status(400).json({ message: 'Product ID must be a number!' })
+        if ( !req.params.pid || !isNaN(req.params.pid) )
+            res.status(400).json({ message: 'Wrong Product ID or not defined!' })
 
         //if ( !isNaN(cid) && !isNaN(pid)){
-        if ( cid && pid){
+        if ( cid && pid && isNaN(cid) && isNaN(pid) ) {
             const newCart = await updateService(cid, pid, "-");
             if(newCart)
                 res.status(200).json("Product removed from cart!");

@@ -31,15 +31,17 @@ export default class ProductsDaoMongoDB {
 
       let paginate_filter = {}
 
-      if ( query.name ) {
-        if ( query.name === 'status') {
-          if ( query.value )
-            paginate_filter = { status: 'true' }
-          else
-            paginate_filter = { $or: [{ status: 'false' }, { stock: 0 }] }
-        }
-        else {
-          paginate_filter = { [query.name]: { $regex: String(query.value), $options: 'i' } }
+      if ( query ) {
+        if ( query.name ) {
+          if ( query.name === 'status') {
+            if ( query.value )
+              paginate_filter = { status: 'true' }
+            else
+              paginate_filter = { $or: [{ status: 'false' }, { stock: 0 }] }
+          }
+          else {
+            paginate_filter = { [query.name]: { $regex: String(query.value), $options: 'i' } }
+          }
         }
       }
       
@@ -74,6 +76,15 @@ export default class ProductsDaoMongoDB {
     try {
       const response = await productsModel.findById(id);
       return response;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async getProductStockById(id) {
+    try {
+      const response = productsModel.find({_id: id}, {stock: 1, _id: 0}).lean()
+      return response
     } catch (error) {
       console.log(error);
     }
@@ -139,6 +150,9 @@ export default class ProductsDaoMongoDB {
           }
         }
 
+      } else {
+        console.log(`Product ID ${id} not found!`);
+        return false
       }
       
     } catch (error) {

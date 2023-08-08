@@ -1,11 +1,56 @@
-import { getAllProds } from "../services/products.services.js";
+import { getAllService } from "../services/products.services.js";
+import { createService } from "../services/carts.services.js";
 
 export const listAllProdsView = async (req, res) => {
     try {
-            const products = await getAllProds()
-            //res.status(200).json({ message: products.length===1 ? products.length + ' Product found': products.length + ' Products found', products })
-            res.render( 'home', {products: products.map(item => item.toJSON())} )
-            // res.redirect(`/home/${products.id}`);
+            const limit = req.query.limit ? Number(req.query.limit) : 2
+            const page = req.query.page ? Number(req.query.page) : 1
+
+            if ( isNaN(limit) || isNaN(page) ) {
+            res.status(400).json({
+                status: 'Error',
+                error: 'limit/page params must be a number!',
+                message: error.message
+
+            }) } 
+            else {
+
+                const products = await getAllService(limit, page, null, null)
+
+                let url = `http://${req.hostname}:${req.app.get("port")}/?`
+                //url += req.url
+                
+                let prevLink = (products.hasPrevPage)? `${url + 'page='+products.prevPage}` : null
+                let nextLink = (products.hasNextPage)? `${url + 'page='+products.nextPage}` : null
+
+                let url2 = ''
+                
+                if ( req.query.limit ) `${url2+='&limit='+limit}`
+
+                prevLink = prevLink ? prevLink += url2 : null
+                nextLink = nextLink ? nextLink += url2 : null
+                
+                if(products.totalDocs){
+                    res.render( 'home', {products: products.docs.map(item => item.toJSON()),
+                        totalPages: products.totalPages,
+                        records: products.totalDocs,
+                        prevPage: products.prevPage,
+                        nextPage: products.nextPage,
+                        page: products.page,
+                        hasPrevPage: products.hasPrevPage?true:false,
+                        hasNextPage: products.hasNextPage?true:false,
+                        prevLink: prevLink,
+                        nextLink: nextLink,
+                        homeLink: url + 'page=1'
+                    } )
+                } else {
+                    res.status(400).json({
+                        status: 'Error',
+                        error: 'Products not found'
+                        //message: error.message
+                    })
+                }
+            }
         
     } catch (error) {
         res.status(404).json({ message: error.message });

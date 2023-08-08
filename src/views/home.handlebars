@@ -1,13 +1,35 @@
 <div>
     {{#if products.length}}
-        <h1>Product list - Total {{products.length}}:</h1>
-        <ol>
+        <h1>Product list - Total {{records}}:</h1>
+        <ul>
         {{#each products}}
-            <li>Title: {{title}}<br>Description: {{description}}<br>Stock: {{stock}}<br>Price: {{price}}</li><br>
+            <li>Title: {{title}}<br>Description: {{description}}<br>Stock: {{stock}}<br>Price: {{price}}</li>
+            <button class="cartAdd" data-id="{{_id}}">Add product to cart</button>
+            <br><br>
         {{/each}}
-        </ol>
+        </ul>
+        <br>
+        {{#if hasPrevPage}}
+            <span><a href="{{prevLink}}">Previous page</a> || </span>
+            <span><a href="{{homeLink}}">First page</a> || </span>
+        {{/if}}
+        {{#if hasNextPage}}
+            <span><a href="{{nextLink}}">Next page</a></span>
+        {{/if}}
+        <br><br>
+        <div>
+            {{#if hasPrevPage}}
+                <span>{{prevPage}} || </span>
+            {{/if}}
+                <span> [ {{page}} / {{totalPages}} ]</span>
+            {{#if hasNextPage}}
+                <span> || {{nextPage}}</span>
+            {{/if}}
+        </div>
     {{else}}
         <h1>Product list:</h1>
         <p>No products created!</p>
     {{/if}}
 </div>
+
+<script src="/products.js"></script>

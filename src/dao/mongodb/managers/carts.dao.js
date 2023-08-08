@@ -33,7 +33,7 @@ export default class CartsDaoMongoDB {
   // Método para crear un carrito nuevo
   async createCart(obj) {
     try {
-      const response = await cartsModel.create(obj);
+      const response = await cartsModel.create(obj)
       return response;
     } catch (error) {
       console.log(error);
@@ -129,7 +129,7 @@ export default class CartsDaoMongoDB {
   }
 
   // Método para actualizar un carrito por su ID recibiendo el ID de producto a agregar y la cantidad específica a designar
-  async updateCantCart(cid, pid, cant) {
+  async updateCantCart(cid, pid, cant, action) {
     try {
       // Generación de constantes para el tratamiento del producto, carrito y el ID del array de productos a analizar
       const product = await this.prodManager.getProductById(pid);
@@ -141,6 +141,8 @@ export default class CartsDaoMongoDB {
         )
         // Verifica si existe el producto en el carrito
         if (existingProduct) {
+          // Comprueba si la operación para agregar las cantidades debe sobreescribirse o debe sumarse al producto ya encontrado
+          if ( action === 'overwrite' ) {
             // Comprueba que el carrito pueda agregar el producto si no se superó el stock
             if( cant <= product.stock) {
               existingProduct.quantity = cant
@@ -151,6 +153,18 @@ export default class CartsDaoMongoDB {
               console.log( `Product ID: ${pid} out of stock!. Max: ${product.stock}` );
               return -1
             }
+          } else {
+            // Comprueba que el carrito pueda agregar el producto si no se superó el stock
+            if( cant + existingProduct.quantity <= product.stock) {
+              existingProduct.quantity += cant
+              await cart.save()
+              return 1
+            }
+            else {
+              console.log( `Product ID: ${pid} out of stock!. Max: ${product.stock}` );
+              return -1
+            }            
+          }
         } else {
           // Al no encontrarse el producto en el carrito y se incorpora el ID y la cantidad
           // Todo lo anterior dicho sólo si el producto posee stock
@@ -171,14 +185,38 @@ export default class CartsDaoMongoDB {
   }
 
 // Método para actualizar un carrito por su ID recibiendo un arreglo de productos a agregar y la cantidad específica a designar
+/*
 async updateProdsCart(cid, prods) {
   try {
-    // Generación de constantes para el tratamiento del producto, carrito y el ID del array de productos a analizar
-    const cart = await this.getCartById(cid);
+    const cart = await this.getCartById(cid)
+    let cartUpdated = false
+    const updateCart = []
     if ( cart ) {
-    cart.products = prods
-    await cart.save()
-    return true
+      prods.forEach( async (item) => {
+        const checkstock = await this.prodManager.getProductStockById(item.product)
+        let stock
+        checkstock.map(prod => stock = prod.stock)
+        if ( item.quantity > stock )
+          console.log( `Product ID: ${item.product} out of stock!. Max: ${stock}` );
+        else {
+          updateCart.push({product: item.product, quantity: item.quantity})
+          cartUpdated = true
+          //const updateCart = await cartsModel.findByIdAndUpdate({_id: cart._id})
+          //console.log(stock);
+          //console.log({product: item.product, quantity: item.quantity})
+          //prodStockOk.push({product: item.product, quantity: item.quantity})
+        }
+      })
+      console.log(updateCart)//no se ven los objetos. Revisar
+      //console.log(prodStockOk)
+      //cart.products = prods
+      //await cart.save()
+      if ( cartUpdated ) {
+        cart.products = updateCart
+        await cart.save()
+        return true
+      } else
+        return false
     }
     else {
       console.log("Cart not found!");
@@ -188,6 +226,7 @@ async updateProdsCart(cid, prods) {
     console.log(error);
   }
 }
+*/
 
   // Método para eliminar un carrito mediante su ID
   async deleteCart(id) {
