@@ -3,6 +3,7 @@ import { createService } from "../services/carts.services.js";
 
 export const listAllProdsView = async (req, res) => {
     try {
+        if ( req.session.user ) {
             const limit = req.query.limit ? Number(req.query.limit) : 2
             const page = req.query.page ? Number(req.query.page) : 1
 
@@ -41,7 +42,9 @@ export const listAllProdsView = async (req, res) => {
                         hasNextPage: products.hasNextPage?true:false,
                         prevLink: prevLink,
                         nextLink: nextLink,
-                        homeLink: url + 'page=1'
+                        homeLink: url + 'page=1',
+                        first_name: req.session.user.info.first_name,
+                        last_name: req.session.user.info.last_name
                     } )
                 } else {
                     res.status(400).json({
@@ -51,6 +54,11 @@ export const listAllProdsView = async (req, res) => {
                     })
                 }
             }
+
+        }
+
+        else
+            res.redirect('/login')
         
     } catch (error) {
         res.status(404).json({ message: error.message });

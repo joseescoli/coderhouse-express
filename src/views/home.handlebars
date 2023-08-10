@@ -1,6 +1,7 @@
 <div>
     {{#if products.length}}
-        <h1>Product list - Total {{records}}:</h1>
+        <h1>Bienvenido, {{first_name}} {{last_name}}</h1>
+        <h2>Product list - Total {{records}}:</h2>
         <ul>
         {{#each products}}
             <li>Title: {{title}}<br>Description: {{description}}<br>Stock: {{stock}}<br>Price: {{price}}</li>
@@ -25,9 +26,17 @@
             {{#if hasNextPage}}
                 <span> || {{nextPage}}</span>
             {{/if}}
+
+            <form action='/profile'>
+              <input type='submit' value='User Profile' />
+            </form>
+            <form action='/logout'>
+              <input type='submit' value='Logout' />
+            </form>
         </div>
     {{else}}
-        <h1>Product list:</h1>
+        <h1>Bienvenido, {{first_name}} {{last_name}}</h1>
+        <h2>Product list:</h2>
         <p>No products created!</p>
     {{/if}}
 </div>

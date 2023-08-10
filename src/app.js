@@ -1,16 +1,36 @@
-//Conexión a base de datos MongoDB Atlas
-import { dbConnect, dbDisconnect } from './dao/mongodb/dbconnection.js';
+// Conexión a base de datos MongoDB Atlas
+import { dbConnect, dbDisconnect, connectionString } from './dao/mongodb/dbconnection.js';
 dbConnect()
 //dbDisconnect()
+
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
+
+// Definición de alamacenamiento de sesiones en MongoDB
+const mongoStoreOption = {
+    store:MongoStore.create({
+            mongoUrl:connectionString,
+            // crypto:{
+            //     secret:'1234'
+            // }
+        }),
+    secret:'1234',
+    resave: false,
+    saveUninitialized: false,
+    cookie:{ maxAge: 1800000 } // 30 minutos
+
+}
 
 // Módulo Express y puerto
 import express from 'express';
 const PORT = 8080;
 
 // Módulo ruteos Express
-import router_prods from './routes/products-router.js';
-import router_carts from './routes/carts-router.js';
-import router_views from './routes/views.router.js'
+import router_prods from './routes/products-router.js'; // Métodos HTTP GET, PUT, POST y DELETE para los productos
+import router_carts from './routes/carts-router.js'; // Métodos HTTP GET, PUT, POST y DELETE para los carritos
+import router_views from './routes/views.router.js' // Métodos HTTP GET que renderizan vistas en Handlebars
+import router_users from './routes/user.router.js' // Métodos HTTP POST que registran o loguean a los usuarios
+import router_login from './routes/login.router.js' // Métodos HTTP GET que renderizan vistas de login de usuario en Handlebars
 
 // Variable __dirname por Package.json en formato Type: module
 import { __dirname } from './path.js';
@@ -34,6 +54,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(express.static(__dirname + '/public'))
+app.use(session(mongoStoreOption));
 
 // Configuración de servidor Express para Handlebars
 app.engine('handlebars', handlebars.engine());
@@ -44,6 +65,8 @@ app.set('view options', {layout: 'main'});
 // Incluyendo los imports de ruteos de Express
 app.use('/api', router_prods)
 app.use('/api', router_carts)
+app.use('/', router_users)
+app.use('/', router_login)
 app.use('/', router_views)
 
 // Inicialización de servicio Express
