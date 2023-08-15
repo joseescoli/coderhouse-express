@@ -3,7 +3,6 @@ import { createService } from "../services/carts.services.js";
 
 export const listAllProdsView = async (req, res) => {
     try {
-        if ( req.session.user ) {
             const limit = req.query.limit ? Number(req.query.limit) : 2
             const page = req.query.page ? Number(req.query.page) : 1
 
@@ -30,6 +29,8 @@ export const listAllProdsView = async (req, res) => {
 
                 prevLink = prevLink ? prevLink += url2 : null
                 nextLink = nextLink ? nextLink += url2 : null
+
+                //console.log(req.session);
                 
                 if(products.totalDocs){
                     res.render( 'home', {products: products.docs.map(item => item.toJSON()),
@@ -54,11 +55,6 @@ export const listAllProdsView = async (req, res) => {
                     })
                 }
             }
-
-        }
-
-        else
-            res.redirect('/login')
         
     } catch (error) {
         res.status(404).json({ message: error.message });

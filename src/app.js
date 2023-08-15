@@ -1,25 +1,18 @@
 // Conexión a base de datos MongoDB Atlas
-import { dbConnect, dbDisconnect, connectionString } from './dao/mongodb/dbconnection.js';
+import { dbConnect, dbDisconnect } from './dao/mongodb/dbconnection.js';
 dbConnect()
 //dbDisconnect()
 
+// Módulo de sesiones
 import session from 'express-session';
-import MongoStore from 'connect-mongo';
 
-// Definición de alamacenamiento de sesiones en MongoDB
-const mongoStoreOption = {
-    store:MongoStore.create({
-            mongoUrl:connectionString,
-            // crypto:{
-            //     secret:'1234'
-            // }
-        }),
-    secret:'1234',
-    resave: false,
-    saveUninitialized: false,
-    cookie:{ maxAge: 1800000 } // 30 minutos
+// Definición de almacenamiento de sesiones en MongoDB
+import { mongoStoreOption } from './dao/mongodb/mongo.session.js'
 
-}
+// Módulos Passport, Passport Local y Passport Github con sus definiciones de estrategias de autenticación
+import passport from 'passport';
+import './passport/local-strategy.js';
+import './passport/github-strategy.js';
 
 // Módulo Express y puerto
 import express from 'express';
@@ -55,6 +48,13 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(express.static(__dirname + '/public'))
 app.use(session(mongoStoreOption));
+// Middleware de manejo de errores
+import { errorHandler } from './middlewares/errorHandler.js'
+app.use(errorHandler);
+
+// Incluyendo módulos Passport, Passport Local y Passport Github a Express
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Configuración de servidor Express para Handlebars
 app.engine('handlebars', handlebars.engine());

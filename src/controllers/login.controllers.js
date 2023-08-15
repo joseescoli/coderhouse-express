@@ -28,11 +28,9 @@ export const errorLogin = (req, res) => {
 
 export const profile = (req, res) => {
     if ( req.session.user )
-        //res.redirect('/')
         res.render('profile', {session: req.session.user.info})
     else
         res.redirect('/login')
-    //console.log(req.session);
 };
 
 export const logout = (req, res) => {
@@ -49,5 +47,4 @@ export const logout = (req, res) => {
     }
     else
         res.redirect('/login')
-    //console.log(req.session);
 };

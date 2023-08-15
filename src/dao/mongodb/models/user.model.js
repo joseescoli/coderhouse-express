@@ -25,6 +25,15 @@ const userSchema = new Schema({
     role: {
         type: String,
         default: 'user'
+    },
+    githubLogin: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
+    profileImg: {
+        type: String,
+        default: null
     }
 });
 
