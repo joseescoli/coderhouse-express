@@ -1,6 +1,6 @@
-import passport from "passport";
 import UserDao from "../dao/mongodb/managers/user.dao.js"
 const userDao = new UserDao();
+import { detectBrowser } from "../utils.js";
 
 export const registerUser = async(req, res) => {
   /*
@@ -50,7 +50,7 @@ export const loginUser = async(req, res) => {
                     image: user.profileImg
                 }
             }
-            res.redirect('/')
+            detectBrowser(req.get('User-Agent')) ? res.redirect('/') : res.send("Logged on!")
         } else
             res.redirect('/error-login')
 

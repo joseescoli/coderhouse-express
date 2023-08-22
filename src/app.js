@@ -18,13 +18,6 @@ import './passport/github-strategy.js';
 import express from 'express';
 const PORT = 8080;
 
-// Módulo ruteos Express
-import router_prods from './routes/products-router.js'; // Métodos HTTP GET, PUT, POST y DELETE para los productos
-import router_carts from './routes/carts-router.js'; // Métodos HTTP GET, PUT, POST y DELETE para los carritos
-import router_views from './routes/views.router.js' // Métodos HTTP GET que renderizan vistas en Handlebars
-import router_users from './routes/user.router.js' // Métodos HTTP POST que registran o loguean a los usuarios
-import router_login from './routes/login.router.js' // Métodos HTTP GET que renderizan vistas de login de usuario en Handlebars
-
 // Variable __dirname por Package.json en formato Type: module
 import { __dirname } from './path.js';
 
@@ -56,6 +49,10 @@ app.use(errorHandler);
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Módulo ruteos Express
+import AllRoutes from './routes/routes.js';
+const allRoutes = new AllRoutes()
+
 // Configuración de servidor Express para Handlebars
 app.engine('handlebars', handlebars.engine());
 app.set('views', __dirname + '/views');
@@ -63,11 +60,7 @@ app.set('view engine', 'handlebars');
 app.set('view options', {layout: 'main'});
 
 // Incluyendo los imports de ruteos de Express
-app.use('/api', router_prods)
-app.use('/api', router_carts)
-app.use('/', router_users)
-app.use('/', router_login)
-app.use('/', router_views)
+app.use('/', allRoutes.getRoutes())
 
 // Inicialización de servicio Express
 const httpServer = app.listen(PORT, ()=>{

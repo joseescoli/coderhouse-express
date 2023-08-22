@@ -20,7 +20,7 @@ const register = async(req, email, password, done) => {
         return done(null, newUser);
     } catch (error) {
         console.log(error);
-        //return done(error, false;)
+        return done(error, false)
     }
 };
 
@@ -32,11 +32,13 @@ const login = async(req, email, password, done) => {
         // console.log('USER', user);
         const userLogin = await userDao.loginUser(user);
         // console.log('LOGIN', userLogin);
-        if(!userLogin) return done(null, false, { message: 'User not found' });
-        return done(null, userLogin);
+        if(!userLogin)
+            return done(null, false, { message: 'User not found' });
+        else
+            return done(null, userLogin);
     } catch (error) {
         console.log(error);
-        //return done(error, false;)
+        return done(error, false)
     }
 };
 

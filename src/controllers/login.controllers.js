@@ -1,3 +1,5 @@
+import { detectBrowser } from "../utils.js";
+
 export const register = (req, res) => {
     res.render('register')
 };
@@ -28,7 +30,7 @@ export const errorLogin = (req, res) => {
 
 export const profile = (req, res) => {
     if ( req.session.user )
-        res.render('profile', {session: req.session.user.info})
+        detectBrowser(req.get('User-Agent')) ? res.render('profile', {session: req.session.user.info}) : res.json(req.session.user.info)
     else
         res.redirect('/login')
 };
@@ -38,8 +40,7 @@ export const logout = (req, res) => {
         delete req.session.user
         req.session.destroy( (err) => {
             if( !err ) {
-                //res.json({ msg: 'Logout ok!' });
-                res.redirect('/login')
+                detectBrowser(req.get('User-Agent')) ? res.redirect('/login') : res.json({ msg: 'Logout ok!' });
             }
             else
                 res.json({ msg: err });

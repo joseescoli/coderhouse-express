@@ -11,7 +11,7 @@
             const newCart = await fetch("/api/carts", { method: "POST" });
             //cart = await newCart.json()
             //let cart = await newCart.json()
-            cart = await newCart.json()
+            cart = ( await newCart.json() ).id
             console.log("!cart:" + cart);
         }
             console.log("cart:" + cart);
@@ -31,7 +31,7 @@
                     // Se agrega el producto al carrito
                     try {
                         const response = await fetch(
-                            `/api/carts/${String(cart.id)}/product/${pid}`,
+                            `/api/carts/${cart}/product/${pid}`,
                             {
                             method: "POST",
                             headers: {
@@ -43,7 +43,7 @@
                 
                         // Muestra mensaje cuando el producto se agrega correctamente
                         if (addProdCart)
-                            alert(`Product ${pid} added to cart ID ${cart.id}!`)
+                            alert(`Product ${pid} added to cart ID ${cart}!`)
 
                     } catch (error) {
                         // Show error en caso de encontrarse

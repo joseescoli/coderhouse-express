@@ -7,6 +7,7 @@ const router = Router();
 
 router.get('/', isAuth, view.listAllProdsView);
 router.get('/api', view.listAllApisView);
+router.get('/api/sessions/current', view.currentSession);
 router.get('/realtimeproducts', isAuth, view.listAllProdsRealtimeView);
 router.get('/chat', view.chatView);
 router.get('*', view.pageNotFoundView);

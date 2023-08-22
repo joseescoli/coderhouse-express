@@ -22,13 +22,17 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
+    cart: {
+        type: Schema.Types.ObjectId,
+        ref: 'carts',
+        default: null
+    },
     role: {
         type: String,
         default: 'user'
     },
     githubLogin: {
         type: Boolean,
-        required: true,
         default: false
     },
     profileImg: {
