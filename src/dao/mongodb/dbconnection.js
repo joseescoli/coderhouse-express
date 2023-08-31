@@ -1,12 +1,15 @@
 import mongoose from 'mongoose';
+import config from '../../config.js';
 
-//export const connectionString = 'mongodb://127.0.0.1:27017/ecommerce';
-export const connectionString = 'mongodb+srv://read_user:lwol9DAS3i8lcNUL@documents.0vx3shf.mongodb.net/ecommerce?retryWrites=true&w=majority';
+// export const connectionString = config.MONGO_LOCAL_URL
+// export const connectionString = config.MONGO_ATLAS_R_URL
+export const connectionString = config.MONGO_ATLAS_RW_URL
+const DB = connectionString.includes('mongodb+srv') ? 'Mongo Atlas' : 'Mongo localhost'
 
 export const dbConnect = async () => {
     try {
         await mongoose.connect(connectionString);
-        console.log('Connected to MongoDB database!');
+        console.log(`Connected to ${DB} database!`);
     } catch (error) {
         console.log(error);
     }
@@ -16,7 +19,7 @@ export const dbConnect = async () => {
 export const dbDisconnect = async () => {
     try {
         await mongoose.disconnect();
-        console.log('Disconnected from MongoDB database!');
+        console.log(`Disconnected from ${DB} database!`);
     } catch (error) {
         console.log(error);
     }

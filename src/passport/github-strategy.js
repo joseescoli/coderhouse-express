@@ -1,12 +1,16 @@
 // Módulo Passport para autenticación con Github. Instalado con "npm i passport-github2"
 import { Strategy as GithubStrategy } from 'passport-github2';
 import passport from 'passport';
+
+// Incorporación de variables de entorno para la configuración de claves sensibles
+import config from '../config.js';
+
 import UserDao from '../dao/mongodb/managers/user.dao.js';
 const userDao = new UserDao();
 
 const strategyOptions = {
-    clientID: 'ENV',
-    clientSecret: 'ENV',
+    clientID: config.GITHUB_CLIENTID,
+    clientSecret: config.GITHUB_CLIENTSECRET,
     callbackURL: 'http://localhost:8080/github',
     scope: ["user:email"],
 };

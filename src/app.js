@@ -1,3 +1,6 @@
+// Configuración general del servidor en variables de entorno
+import config from './config.js';
+
 // Conexión a base de datos MongoDB Atlas
 import { dbConnect, dbDisconnect } from './dao/mongodb/dbconnection.js';
 dbConnect()
@@ -16,7 +19,7 @@ import './passport/github-strategy.js';
 
 // Módulo Express y puerto
 import express from 'express';
-const PORT = 8080;
+const PORT = config.PORT || 8080;
 
 // Variable __dirname por Package.json en formato Type: module
 import { __dirname } from './path.js';
@@ -28,7 +31,7 @@ import handlebars from 'express-handlebars';
 import { Server } from 'socket.io';
 
 // Llamadas de productos para invocar sus métodos
-import { getAllService as prodService } from "./services/products.services.js"
+import { getAllProds as prodService } from "./services/products.services.js"
 
 // Llamadas de mensajes para invocar sus métodos
 import { getAllService as msgService, createService as msgCreate } from "./services/messages.services.js"
@@ -72,6 +75,7 @@ app.set("port", PORT)
 // Anexo de servicio de WebSocket a servidor Express
 const socketServer = new Server(httpServer)
 
+// Se define la variable "io" para todo express y ser usada luego dentro de "products.controller.js" como constante y llamar a req.app.get("io") y poder emitir cambios por socket como servidor
 app.set("io", socketServer)
 
 // Configuración y definiciones de servicio WebSocket
