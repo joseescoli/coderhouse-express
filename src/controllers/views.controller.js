@@ -1,6 +1,8 @@
 import { getAllService } from "../services/products.services.js";
 import { createService } from "../services/carts.services.js";
 
+import { detectBrowser } from "../utils.js";
+
 export const listAllProdsView = async (req, res) => {
     try {
 
@@ -36,7 +38,9 @@ export const listAllProdsView = async (req, res) => {
                 //console.log(req.session);
                 
                 if(products.totalDocs){
-                    res.render( 'home', {products: products.docs.map(item => item.toJSON()),
+
+                    const responseObject = {
+                        products: products.docs.map(item => item.toJSON()),
                         totalPages: products.totalPages,
                         records: products.totalDocs,
                         prevPage: products.prevPage,
@@ -49,7 +53,10 @@ export const listAllProdsView = async (req, res) => {
                         homeLink: url + 'page=1',
                         first_name: req.session.user.info.first_name,
                         last_name: req.session.user.info.last_name
-                    } )
+                    }
+
+                    detectBrowser(req.get('User-Agent')) ? res.render( 'home', responseObject ) : res.json( responseObject )
+
                 } else {
                     res.status(400).json({
                         status: 'Error',
