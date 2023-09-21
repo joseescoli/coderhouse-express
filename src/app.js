@@ -17,9 +17,8 @@ import passport from 'passport';
 import './passport/local-strategy.js';
 import './passport/github-strategy.js';
 
-// Módulo Express y puerto
+// Módulo Express y puerto en config.PORT
 import express from 'express';
-const PORT = config.PORT || 8080;
 
 // Variable __dirname por Package.json en formato Type: module
 import { __dirname } from './path.js';
@@ -66,11 +65,9 @@ app.set('view options', {layout: 'main'});
 app.use('/', allRoutes.getRoutes())
 
 // Inicialización de servicio Express
-const httpServer = app.listen(PORT, ()=>{
-    console.log(`Server started at port: ${PORT}`);
+const httpServer = app.listen(config.PORT, ()=>{
+    console.log(`Server started at port: ${config.PORT}`);
 });
-
-app.set("port", PORT)
 
 // Anexo de servicio de WebSocket a servidor Express
 const socketServer = new Server(httpServer)
@@ -107,12 +104,6 @@ socketServer.on('connection', async (socket) => {
     
     // Envía el evento "messages" a todos los clientes conectados y les pasa la función de todos los mensajes
     socketServer.emit('messages', await msgService() );
-    
-    // Registra el evento "newUser" y el servidor registra por console.log el nuevo usuario conectado y envía al chat a todos los usuarios del nuevo usuario conectado (excepto a sí mismo)
-    socket.on('newUser', (user)=>{
-        console.log(`${user} is logged in`);
-        socket.broadcast.emit('newUser', user);
-    });
     
     // Registra el evento "chat:message" y envía el nuevo mensaje incorporado por otro usuario a todos
     socket.on('chat:message', async (msg)=>{

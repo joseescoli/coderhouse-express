@@ -1,12 +1,12 @@
 import { UserModel } from "../models/user.model.js";
 import { createHash, isValidPassword } from '../../../utils.js';
-
+import CartsDaoMongoDB from "./carts.dao.js";
+const cartDao = new CartsDaoMongoDB()
 
 export default class UserDao {
 
     async registerUser(user) {
         try {
-
             const { email, password } = user;            
             const existUser = await this.getByEmail(email);
             if( !existUser ) {
@@ -53,6 +53,22 @@ export default class UserDao {
           const userExist = await UserModel.findOne({email}); 
           // console.log(userExist);
           if(userExist) return userExist
+          else return false
+        } catch (error) {
+          console.log(error)
+          throw new Error(error)
+        }
+      }
+
+      async newCart(email){
+        try {
+          const user = await UserModel.findOne({email}); 
+          // console.log(userExist);
+          if(user) {
+            user.cart = (await cartDao.createCart())._id
+            user.save()
+            return true
+          }
           else return false
         } catch (error) {
           console.log(error)

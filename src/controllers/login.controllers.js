@@ -36,7 +36,8 @@ export const profile = (req, res) => {
 };
 
 export const logout = (req, res) => {
-    if ( req.session.user ) {
+    if ( req.session?.user ) {
+        console.log(`User ${req.session.user.info.email} logged out!`);
         delete req.session.user
         req.session.destroy( (err) => {
             if( !err ) {
@@ -45,7 +46,10 @@ export const logout = (req, res) => {
             else
                 res.json({ msg: err });
         })
+        req.logout( error => {
+            error ?? console.log(error)
+        })
     }
     else
-        res.redirect('/login')
+        detectBrowser(req.get('User-Agent')) ? res.redirect('/login') : res.json({ msg: 'User not logged in!' })
 };

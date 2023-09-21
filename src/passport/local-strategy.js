@@ -3,6 +3,8 @@ import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import UserDao from '../dao/mongodb/managers/user.dao.js';
 const userDao = new UserDao();
+import CartsDaoMongoDB from '../dao/mongodb/managers/carts.dao.js';
+const cartDao = new CartsDaoMongoDB();
 
 const strategyOptions = {
     usernameField: 'email',
@@ -13,10 +15,12 @@ const strategyOptions = {
 /* ----------------------------- lógica registro ---------------------------- */
 const register = async(req, email, password, done) => {
     try {
+        const cart = await cartDao.createCart()
         const user = await userDao.getByEmail(email);
         if (user) return done(null, false);
         // const { first_name, last_name,... } = req.body
-        const newUser = await userDao.registerUser(req.body);
+        const obj = { ...req.body, cart: cart._id }
+        const newUser = await userDao.registerUser( obj );
         return done(null, newUser);
     } catch (error) {
         console.log(error);

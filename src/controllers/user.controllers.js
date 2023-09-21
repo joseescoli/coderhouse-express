@@ -47,7 +47,8 @@ export const loginUser = async(req, res) => {
                     age: user.age,
                     role: user.role,
                     github: user.githubLogin,
-                    image: user.profileImg
+                    image: user.profileImg,
+                    cart: user.cart
                 }
             }
             detectBrowser(req.get('User-Agent')) ? res.redirect('/') : res.send("Logged on!")
@@ -61,8 +62,8 @@ export const loginUser = async(req, res) => {
 
 export const githubLogin = async (req, res, next) => {
     try {
-      // console.log(req.user)
-      if ( req.user ) {
+      // console.log("\nreq.user: " + req.user)
+      if ( req.user && req.session?.passport?.user ) {
         req.session.user = {
           loggedIn: true,
           sessionCount: 1,
@@ -73,7 +74,8 @@ export const githubLogin = async (req, res, next) => {
               age: req.user.age,
               role: req.user.role,
               github: req.user.githubLogin,
-              image: req.user.profileImg
+              image: req.user.profileImg,
+              cart: req.user.cart
           }
         }
         res.redirect('/')
@@ -82,6 +84,7 @@ export const githubLogin = async (req, res, next) => {
         res.redirect('/error-login')
 
       } catch (error) {
-      next(error.message);
+        console.log(error);
+        // next(error.message);
     }
   };

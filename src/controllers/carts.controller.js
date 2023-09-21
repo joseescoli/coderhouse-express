@@ -1,4 +1,4 @@
-import { getAllService, getByIdService, createService, updateService, deleteByIdService, emptyCartService, updateProdCantService, addProdsService } from "../services/carts.services.js";
+import { getAllService, getByIdService, createService, updateService, deleteByIdService, emptyCartService, updateProdCantService, addProdsService, purchaseCartService } from "../services/carts.services.js";
 
 // Ruta TESTING todos los carritos
 export const getAllController = async(req, res) => {
@@ -210,6 +210,32 @@ export const emptyCartController = async(req, res) => {
                 res.send(`Products removed from Cart ID: ${cid} successfully`)
             else
                 res.send(`Cart ID: ${cid} not found`)
+        }
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+
+    }
+};
+
+// PUT ==> /api/carts/:cid/purchase
+export const purchaseController = async(req, res) => {
+    try {
+        //const cid = Number(req.params.cid);
+        const cid = req.params.cid === req.session.user.info.cart ? req.params.cid : false
+        //if ( isNaN(cid) )
+        if ( !cid )
+            res.status(400).json({ message: 'Cart ID must be valid!' })
+        else {
+            const ticket = { purchaser: req.session.user.info.email, code: cid }
+            const amount = await purchaseCartService(ticket);
+            if ( amount ) {
+                console.log(`Products from cart purchased! Ticket CODE ${cid} is a reference for your purchase. Keep track or copy it! Total amount: $${amount}. An email will be sent with all these information.`)
+                res.status(200).json(`Products from cart purchased! Ticket CODE ${cid} is a reference for your purchase. Keep track or copy it! Total amount: $${amount}. An email will be sent with all these information.`)
+            }
+            else {
+                console.log(`Cart ID: ${cid} not found or empty`)
+                res.status(400).json(`Cart ID: ${cid} not found or empty`)
+            }
         }
     } catch (error) {
         res.status(404).json({ message: error.message });

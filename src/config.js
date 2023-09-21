@@ -11,7 +11,7 @@ if ( process.env.DEBUG?.toLowerCase() )
 
 export default {
     NODE_ENV: process.env.NODE_ENV,
-    PORT: process.env.PORT,
+    PORT: process.env.PORT || 8080,
     MONGO_ATLAS_RW_URL: process.env.MONGO_ATLAS_RW_URL,
     MONGO_ATLAS_R_URL: process.env.MONGO_ATLAS_R_URL,
     MONGO_LOCAL_URL: process.env.MONGO_LOCAL_URL,

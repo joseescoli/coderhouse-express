@@ -1,5 +1,6 @@
 // Carga de servicios para llamadas de productos e invocar sus métodos
 import { getAllProds, getAllService, getByIdService, createService, updateService, deleteByIdService, deleteAllService } from "../services/products.services.js";
+import config from "../config.js";
 
 export const getAllController = async (req, res) => {
     try {
@@ -27,7 +28,7 @@ export const getAllController = async (req, res) => {
 
             const products = await getAllService(limit, page, sort, query);
 
-            let url = `http://${req.hostname}:${req.app.get("port")}/api/products?`
+            let url = `http://${req.hostname}:${config.PORT || 8080}/api/products?`
             //url += req.url
             
             let prevLink = (products.hasPrevPage)? `${url + 'page='+products.prevPage}` : null

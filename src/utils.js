@@ -16,7 +16,7 @@ export const createHash = password => bcrypt.hashSync(password, bcrypt.genSaltSy
  */
 export const isValidPassword = (password, dbpass) => bcrypt.compareSync(password, dbpass);
 
-export const detectBrowser = (agent) => {    
+export const detectBrowser = (agent) => {
     if(agent.match(/chrome|chromium|crios/i)){
         return "chrome";
     }else if(agent.match(/firefox|fxios/i)){

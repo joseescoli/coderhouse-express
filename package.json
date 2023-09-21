@@ -6,7 +6,11 @@
   "type": "module",
   "scripts": {
     "start": "node .",
-    "dev": "nodemon ."
+    "start-local": "node . local",
+    "start-atlas": "node . atlas",
+    "dev": "nodemon .",
+    "dev-local": "nodemon . local",
+    "dev-atlas": "nodemon . atlas"
   },
   "repository": {
     "type": "git",
@@ -28,7 +32,7 @@
     "nodemon": "^2.0.22"
   },
   "dependencies": {
-    "bcrypt": "^5.1.1",
+    "bcrypt": "^5.1.0",
     "connect-mongo": "^5.0.0",
     "dotenv": "^16.3.1",
     "express-handlebars": "^7.0.7",

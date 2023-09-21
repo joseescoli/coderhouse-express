@@ -56,7 +56,7 @@ export default class CartsDaoMongoDB {
     }
   }
 
-  // Método para actualizar un carrito por su ID recibiendo el ID de producto a agregar
+  // Método para actualizar un carrito por su ID recibiendo el ID de producto a agregar. INCREMENTA O DISMINUYE LA CANTIDAD DE UN PRODUCTO SÓLO EN 1 UNIDAD
   async updateCart(cid, pid, action) {
     try {
       // Generación de constantes para el tratamiento del producto, carrito y el ID del array de productos a analizar
@@ -128,7 +128,7 @@ export default class CartsDaoMongoDB {
     }
   }
 
-  // Método para actualizar un carrito por su ID recibiendo el ID de producto a agregar y la cantidad específica a designar
+  // Método para actualizar un carrito por su ID recibiendo el ID de producto a agregar y la cantidad específica a designar. DESIGNA O AGREGA LA CANTIDAD DE UN PRODUCTO POR PARÁMETRO
   async updateCantCart(cid, pid, cant, action) {
     try {
       // Generación de constantes para el tratamiento del producto, carrito y el ID del array de productos a analizar
@@ -237,7 +237,7 @@ async updateProdsCart(cid, prods) {
       console.log(error);
     }
   }
-
+  
   // Método para eliminar todos los carritos
   async deleteAllCarts() {
     try {
@@ -247,4 +247,51 @@ async updateProdsCart(cid, prods) {
       console.log(error);
     }
   }
+  
+  // Método para grabar la compra del carrito mediante su ID
+  async purchaseCart(ticket) {
+    try {
+
+      // Carga de carrito actual para la compra
+      const cart = await this.getCartById(ticket.code);
+
+      // Se comprueba que el carrito actual tenga productos para comprar
+      if ( !cart || cart.products.length === 0 ) return false
+      else {
+
+        // Constante filtrada con los productos del carrito que tengan stock disponible de acuerdo a la cantidad solicitada
+        const cartFilter = cart.products.filter( prod => prod.product.stock >= prod.quantity )
+
+        // Se verifica que todos los productos seleccionados tengan stock
+        if ( cart.products.length === cartFilter.length ) {
+          // Corrige el stock de los productos con la cantidad solicitada. cartFilter ya tiene verificado que poseen stock
+          cart.products.forEach( (prod) => {
+            prod.product.stock -= prod.quantity
+            prod.product.save()
+          })
+
+        }
+        // Al haber productos sin stock se disminuye el stock de los productos que están disponibles y se retiran del carrito actual los productos sin stock
+        else {
+          cartFilter.forEach( (prod) => {
+            prod.product.stock -= prod.quantity
+            prod.product.save()
+          })
+          // Carga de productos al carrito actual que tengan stock disponible de acuerdo a la cantidad solicitada
+          cart.products = [ ...cartFilter ]
+          await cart.save()
+        }
+        
+        // console.log("\n\nCarrito actual:\n" + (await this.getCartById(ticket.code)).products);
+
+        // Se calcula el monto del carrito para informar al usuario
+        const amount = cartFilter.reduce( ( subtotal, item ) => subtotal + item.quantity * item.product.price, 0 )
+
+        return amount
+      }  
+    } catch (error) {
+    console.log(error);
+    }
+  }
+
 }

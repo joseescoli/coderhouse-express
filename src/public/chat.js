@@ -1,22 +1,20 @@
 const socket = io();
 
-let username = null;
+const username = document.getElementsByTagName('h1')[0].innerText
 
-if( !username ) {
-        Swal.fire({
-            title: '¡Welcome to chat!',
-            text: 'Insert your username here',
-            input: 'text',
-            inputValidator: (value)=>{
-                if(!value){
-                    return 'Your username is required'
-                }
-            }
-        }).then((input)=>{
-            username = input.value;
-        });
-        socket.emit('newUser', username)
-}
+socket.on('user_logged', (user)=>{
+        Toastify({
+            text: `🟢 ${user} is logged in`,
+            duration: 3000,
+            gravity: 'top',
+            position: 'right',
+            stopOnFocus: true,
+            // style: {
+            //     background: "linear-gradient(to right, #00b09b, #96c93d)"
+            // }
+            // onClick: ()=>{}
+        }).showToast();
+    });
 
 const message = document.getElementById('message');
 const btn = document.getElementById('send');
@@ -37,20 +35,6 @@ socket.on('messages', (data) =>{
         return `<p><strong>${msg.user}: ${msg.message}<strong></p>`
     }).join(' ')
     output.innerHTML = chatRender
-});
-
-socket.on('newUser', (username)=>{
-    Toastify({
-        text: `🟢 ${username} is logged in`,
-        duration: 3000,
-        gravity: 'top',
-        position: 'right',
-        stopOnFocus: true,
-        // style: {
-        //     background: "linear-gradient(to right, #00b09b, #96c93d)"
-        // }
-        // onClick: ()=>{}
-    }).showToast();
 });
 
 message.addEventListener('keydown', ()=>{

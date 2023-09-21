@@ -1,9 +1,11 @@
 import mongoose from 'mongoose';
 import config from '../../config.js';
 
+export const connectionString = process.argv[2].toLowerCase() === 'atlas' ? config.MONGO_ATLAS_RW_URL : config.MONGO_LOCAL_URL
+
 // export const connectionString = config.MONGO_LOCAL_URL
 // export const connectionString = config.MONGO_ATLAS_R_URL
-export const connectionString = config.MONGO_ATLAS_RW_URL
+// export const connectionString = config.MONGO_ATLAS_RW_URL
 const DB = connectionString.includes('mongodb+srv') ? 'Mongo Atlas' : 'Mongo localhost'
 
 export const dbConnect = async () => {

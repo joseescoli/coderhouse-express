@@ -32,27 +32,31 @@ router.post('/login', passport.authenticate('login',
 */
 
 // GitHub Register OAUTH
-router.get('/oauth/github', passport.authenticate('github', { scope: ['user:email'] }));
+router.get('/oauth/github', passport.authenticate('github'));
+// router.get('/oauth/github', passport.authenticate('github', { scope: ['user:email'] }));
 
 // GitHub Login
-router.get('/github', passport.authenticate('github', { scope: ['user:email'] }), githubLogin);
+router.get('/github', passport.authenticate('github'), githubLogin);
+// router.get('/github', passport.authenticate('github', { scope: ['user:email'] }), githubLogin);
 
-// GitHub Login con params
 /*
+// GitHub Login con params
 router.get('/github', passport.authenticate('github', {
     scope: ['user:email'],
     failureRedirect: '/errorLogin',
-    successRedirect: '/profile',
+    successRedirect: '/',
     passReqToCallback: true
 }));
 */
 
 // Logout del sitio
+/*
 router.get('/logout', (req, res) => {
     req.logout( (err) => {
         if(err) return res.send(err)
         else res.redirect('/login')
     })
 })
+*/
 
 export default router;

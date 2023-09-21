@@ -1,5 +1,8 @@
 import CartsDaoMongoDB from "../dao/mongodb/managers/carts.dao.js"
 const cartDao = new CartsDaoMongoDB();
+import UserDao from "../dao/mongodb/managers/user.dao.js"
+const userDao = new UserDao()
+import { createTicketService } from "./tickets.services.js";
 
 // Persistencia de archivos
 /* No se utilizará
@@ -94,6 +97,20 @@ export const emptyCartService = async (cid) => {
   try {
     const response = await cartDao.emptyCart(cid);
     return response;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const purchaseCartService = async (ticket) => {
+  try {
+    const response = await cartDao.purchaseCart(ticket)
+    if ( response ) {
+      // console.log(response);
+      await userDao.newCart(ticket.purchaser)
+      await createTicketService( { ...ticket, amount: response })
+    }
+    return response
   } catch (error) {
     console.log(error);
   }
