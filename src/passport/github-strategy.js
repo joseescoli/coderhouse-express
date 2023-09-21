@@ -8,6 +8,7 @@ import config from '../config.js';
 
 import UserDao from '../dao/mongodb/managers/user.dao.js';
 const userDao = new UserDao();
+import { sendMailEthereal } from '../services/email.services.js';
 
 const strategyOptions = {
     clientID: config.GITHUB_CLIENTID,
@@ -39,6 +40,7 @@ const registerOrLogin = async (accessToken, refreshToken, profile, done) => {
             cart: cart._id
         });
         // console.log("\n\nUsuario registrado: " + newUser);
+        await sendMailEthereal(email)
         return done(null, newUser);
     }
 }
