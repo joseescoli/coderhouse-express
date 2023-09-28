@@ -1,4 +1,7 @@
 import config from "../config.js";
+import { HttpResponse } from "../utils/http.responses.js";
+import errors from "../utils/errors/errors.constants.js";
+const httpResponse = new HttpResponse()
 
 const access = ( ...roles ) => {
     return ( req, res, next ) => {
@@ -14,7 +17,7 @@ const access = ( ...roles ) => {
             }
             else {
                 console.log(`Endpoint ${req.url} access denied! No suitable role.`);
-                res.status(401).send({ msg: '[401] - Unauthorized access!' })
+                return httpResponse.Unauthorized(res, errors.NO_ROLE)
             }
         }
     }

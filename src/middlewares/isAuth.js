@@ -1,4 +1,4 @@
-import { detectBrowser } from "../utils.js";
+import { detectBrowser } from "../utils/utils.js";
 
 export const isAuth = ( req, res, next ) => {
     // console.log("\nreq.session.passport.user: " + req.session?.passport?.user);

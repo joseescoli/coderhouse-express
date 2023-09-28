@@ -2,7 +2,7 @@
 import { Router } from 'express'
 
 // Controlador de gestión de productos
-import { getAllController, getByIdController, createController, updateController, deleteByIdController, deleteAllController } from '../controllers/products.controller.js';
+import { getAllController, getByIdController, createController, updateController, deleteByIdController, deleteAllController, mockProducts } from '../controllers/products.controller.js';
 
 // Incorporación de Middlewares
 import fieldValidator from '../middlewares/fieldValidator.js'; // Valida campos correctos en creación de producto
@@ -14,6 +14,7 @@ const router = Router();
 
 // Definición de ruteos de productos, sus métodos y sus middlewares. Sólo funcionan estando autenticado.
 router.get('/products', isAuth, getAllController);  // Lista todos los productos
+router.get('/products/mockingproducts', isAuth, mockProducts); // Genera 100 productos de prueba
 router.get('/products/:pid', isAuth, getByIdController);    // Obtiene producto por ID
 router.post('/products', fieldValidator, isAuth, access('admin'), createController);    // Alta de nuevo producto (Sólo administradores)
 router.put('/products/:pid', isAuth, access('admin'), updateController) // Actualiza producto desde el cuerpo del request indicando ID en la ruta (Sólo administradores)

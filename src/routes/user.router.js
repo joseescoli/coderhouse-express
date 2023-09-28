@@ -6,7 +6,7 @@ const router = Router();
 
 
 // Registro passport local
-//router.post('/register', passport.authenticate('register'), registerUser);
+router.post('/register', passport.authenticate('register'), registerUser);
 
 // Registro passport local con params
 router.post('/register', passport.authenticate('register',

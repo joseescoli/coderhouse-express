@@ -1,11 +1,12 @@
 import ProductsDaoMongoDB from "../dao/mongodb/managers/products.dao.js"
 const prodDao = new ProductsDaoMongoDB();
+import { createProductsMocking } from "../utils/utils.js";
 
 // Persistencia de archivos
 /* No se utilizará
 import { ProductManager } from "../dao/fs/ProductManager.js";
-import { __dirname } from "../path.js";
-const productManager = new ProductManager( __dirname + '/src/dao/fs/data/products.json' )
+import { __dirname } from "./path.js";
+const productManager = new ProductManager( __dirname + '/dao/fs/data/products.json' )
 */
 
 export const getAllProds = async () => {
@@ -14,6 +15,7 @@ export const getAllProds = async () => {
     return response;
   } catch (error) {
     console.log(error);
+    throw new Error(error.message)
   }
 }
 
@@ -23,6 +25,7 @@ export const getAllService = async (limit, page, sort, query) => {
       return response;
     } catch (error) {
       console.log(error);
+      throw new Error(error.message)
     }
   }
 
@@ -32,6 +35,7 @@ export const getByIdService = async (id) => {
       return response;
     } catch (error) {
       console.log(error);
+      throw new Error(error.message)
     }
   }
 
@@ -41,6 +45,7 @@ export const createService = async (obj) => {
       return response;
     } catch (error) {
       console.log(error);
+      throw new Error(error.message)
     }
   }
 
@@ -49,6 +54,7 @@ export const updateService = async (id, obj) => {
       return await prodDao.updateProduct(id, obj);
     } catch (error) {
       console.log(error);
+      throw new Error(error.message)
     }
   }
 
@@ -58,6 +64,7 @@ export const deleteByIdService = async (id) => {
       return response;
     } catch (error) {
       console.log(error);
+      throw new Error(error.message)
     }
   }
 
@@ -67,6 +74,18 @@ export const deleteAllService = async () => {
     return response;
   } catch (error) {
     console.log(error);
+    throw new Error(error.message)
+  }
+
+}
+
+export const generateProductsMocking = async (cant) => {
+  try {
+    const products = createProductsMocking(cant)
+    return products;
+  } catch (error) {
+    console.log(error);
+    throw new Error(error.message)
   }
 
 }

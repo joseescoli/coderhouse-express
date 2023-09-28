@@ -1,6 +1,6 @@
 import UserDao from "../dao/mongodb/managers/user.dao.js"
 const userDao = new UserDao();
-import { detectBrowser } from "../utils.js";
+import { detectBrowser } from "../utils/utils.js";
 
 export const registerUser = async(req, res) => {
   /*

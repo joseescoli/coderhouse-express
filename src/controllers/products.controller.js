@@ -1,6 +1,11 @@
 // Carga de servicios para llamadas de productos e invocar sus métodos
-import { getAllProds, getAllService, getByIdService, createService, updateService, deleteByIdService, deleteAllService } from "../services/products.services.js";
+import { getAllProds, getAllService, getByIdService, createService, updateService, deleteByIdService, deleteAllService, generateProductsMocking } from "../services/products.services.js";
+// Incorporación de variables de entorno
 import config from "../config.js";
+// Agregada de respuesta de errores y mensajes estandarizados
+import { HttpResponse } from "../utils/http.responses.js";
+const httpResponse = new HttpResponse();
+import errorsConstants from "../utils/errors/errors.constants.js";
 
 export const getAllController = async (req, res) => {
     try {
@@ -18,12 +23,15 @@ export const getAllController = async (req, res) => {
             if( !( sort === '1' || sort === '-1' || sort === 'a' || sort === 'd') ) sort = null
 
         if ( isNaN(limit) || isNaN(page) )
+            return httpResponse.WrongInfo(res, errorsConstants.LIMIT_PAGE_NUMBER)
+        /*
             res.status(400).json({
                 status: 'Error',
                 error: 'limit/page params must be a number!',
                 message: error.message
 
             })
+        */
         else {
 
             const products = await getAllService(limit, page, sort, query);
@@ -45,8 +53,7 @@ export const getAllController = async (req, res) => {
             nextLink = nextLink ? nextLink += url2 : null
             
             if(products.totalDocs){
-                res.status(200).json({
-                    status: 'success',
+                const data = {
                     payload: products.docs,
                     totalPages: products.totalPages,
                     prevPage: products.prevPage,
@@ -57,23 +64,22 @@ export const getAllController = async (req, res) => {
                     prevLink: prevLink,
                     nextLink: nextLink,
                     records: products.totalDocs
-                })
-                // res.status(200).json(product)
-            } else {
-                res.status(400).json({
-                    status: 'Error',
-                    error: 'Products not found'
-                    //message: error.message
-                })
-            }
+                }
+                return httpResponse.Ok(res, data);
+            } else
+                return httpResponse.NotFound(res, errorsConstants.PRODS_NOT_FOUND)
         }
-        
+
     } catch (error) {
+        console.log(error.stack);
+        return httpResponse.NotFound(res, errorsConstants.PRODS_ERROR);
+        /*
         res.status(404).json({
             status: 'Error',
             error: 'Error getting products!',
             message: error.message
         });
+        */
     }
 };
 
@@ -83,18 +89,19 @@ export const getByIdController = async (req, res) => {
         const id = req.params.pid
         //if ( isNaN(id) )
         if ( !id )
-            res.status(400).json({ message: 'Product ID must be a number!' })
+            return httpResponse.WrongInfo(res, errorsConstants.PROD_NUMBER)
+            // res.status(400).json({ message: 'Product ID must be a number!' })
         else {
             const product = await getByIdService(id);
-            if(product){
-                res.status(200).json({ message: 'Product found', product })
-                // res.status(200).json(product)
-            } else {
-                res.status(400).send('Product not found')
-            }
+            if(product)
+                return httpResponse.Ok(res, product)
+            else
+                return httpResponse.NotFound(res, errorsConstants.PROD_NOT_FOUND)
         }
     } catch (error) {
-        res.status(404).json({ message: error.message });
+        console.log(error.stack);
+        return httpResponse.NotFound(res, error.message)
+        // res.status(404).json({ message: error.message });
     }
 };
 
@@ -116,12 +123,13 @@ export const createController = async (req, res) => {
             products = products.map(item => item.toJSON())
             // Envía el evento "products" a todos los clientes conectados con la lista actualizada de productos
             io.emit('products', products);
-            res.status(200).json("Product added!");
+            return httpResponse.Ok(res, newProduct)
         }
         else
-            res.status(404).json({ message: "Invalid product attributes. Verify all fields are complete and avoid duplicate code!. [Fields required: title, description, price, code, stock, category]" });
+            return httpResponse.WrongInfo(res, errorsConstants.PROD_FIELDS_INVALID)
     } catch (error) {
-        res.status(404).json({ message: error.message });
+        console.log(error.stack);
+        return httpResponse.WrongInfo(res, error.message)
     }
 };
 
@@ -130,7 +138,7 @@ export const updateController = async (req, res) => {
         const io = req.app.get("io");
 
         if ( !req.params.pid || !isNaN(req.params.pid))
-            res.status(400).json({ message: 'Product ID error or not defined in URL!' })
+            return httpResponse.WrongInfo(res, errorsConstants.PROD_ID_WRONG)
         else {
 //            if ( isNaN( Number( req.params.pid) ) )
 //                res.status(400).json({ message: 'Product ID must be a number!' })
@@ -157,15 +165,16 @@ export const updateController = async (req, res) => {
                     products = products.map(item => item.toJSON())
                     // Envía el evento "products" a todos los clientes conectados con la lista actualizada de productos
                     io.emit('products', products);
-                    res.send(`Product updated successfully! ${fields} ${fields === 1 ? ' attribute changed.' : ' attributes changed.'}`)
+                    return httpResponse.Ok(res, updateFields)
+                    // res.send(`Product updated successfully! ${fields} ${fields === 1 ? ' attribute changed.' : ' attributes changed.'}`)
                 }
                 else
-                    res.status(404).send('Product not found or duplicate product code')
+                    return httpResponse.WrongInfo(res, errorsConstants.PROD_DUPLICATE)
 //            }
         }
     } catch (error) {
-        res.status(404).json({ message: error.message });
-
+        console.log(error.stack);
+        return httpResponse.NotFound(res, error.message)
     }
 };
 
@@ -176,7 +185,7 @@ export const deleteByIdController = async (req, res) =>{
         const pid = req.params.pid
         //if ( isNaN(pid) )
         if ( !pid )
-            res.status(400).json({ message: 'Product ID must be a number!' })
+            return httpResponse.WrongInfo(res, errorsConstants.PROD_NUMBER)
         else {
             const prodDel = await deleteByIdService(pid);
             if(prodDel) {
@@ -184,14 +193,14 @@ export const deleteByIdController = async (req, res) =>{
                 products = products.map(item => item.toJSON())
                 // Envía el evento "products" a todos los clientes conectados con la lista actualizada de productos
                 io.emit('products', products);
-                res.send(`Product ID: ${pid} deleted successfully`)
+                return httpResponse.Ok(res, errorsConstants.PROD_ID_DEL)
             }
             else
-                res.send(`Product ID: ${pid} not found`)
+                return httpResponse.NotFound(res, errorsConstants.PROD_NOT_FOUND)
         }
     } catch (error) {
-        res.status(404).json({ message: error.message });
-
+        console.log(error.stack);
+        return httpResponse.NotFound(res, error.message)
     }
 };
 
@@ -203,9 +212,19 @@ export const deleteAllController = async (req, res) =>{
         products = products.map(item => item.toJSON())
         // Envía el evento "products" a todos los clientes conectados con la lista actualizada de productos
         io.emit('products', products);
-        res.send('Products deleted successfully')
+        return httpResponse.Ok(res, errorsConstants.PRODS_DEL)
     } catch (error) {
-        res.status(404).json({ message: error.message });
+        console.log(error.stack);
+        return httpResponse.NotFound(res, error.message)
+    }
+};
 
+export const mockProducts = async (req, res) =>{
+    try {
+        const mockProds = await generateProductsMocking(100);
+        return httpResponse.Ok(res, mockProds)
+    } catch (error) {
+        console.log(error.stack);
+        return httpResponse.NotFound(res, error.message)
     }
 };

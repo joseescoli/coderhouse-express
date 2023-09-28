@@ -18,7 +18,7 @@ const strategyOptions = {
 };
 
 const registerOrLogin = async (accessToken, refreshToken, profile, done) => {
-    // console.log('PROFILE --> ', profile);
+    // console.log('PROFILE --> \n', profile);
     const { value: email } = profile.emails?.[0] ?? [{ value: null }];
     const user = await userDao.getByEmail( email );
     // console.log("Chequeo usuario: " + user);
@@ -30,8 +30,8 @@ const registerOrLogin = async (accessToken, refreshToken, profile, done) => {
         let lastName = '';
         parts.length > 1 ? lastName = parts.slice(1).join(' ') : lastName = parts[0];
         const newUser = await userDao.registerUser({
-            first_name: profile._json.name.split(' ')[0],
-            last_name: lastName,
+            first_name: profile._json.name.split(' ')[0] ?? profile.username,
+            last_name: lastName ?? 'GitHUB User',
             email,
             password: "",
             githubLogin: true,

@@ -7,7 +7,7 @@ import { createTicketService } from "./tickets.services.js";
 // Persistencia de archivos
 /* No se utilizará
 import { CartManager } from "../dao/fs/CartManager.js";
-import { __dirname } from "../path.js";
+import { __dirname } from "../utils/path.js";
 const cartManager = new CartManager( __dirname + '/src/dao/fs/data/carts.json' )
 */
 

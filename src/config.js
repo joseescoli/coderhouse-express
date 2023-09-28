@@ -6,7 +6,7 @@ import "dotenv/config"
 if ( !( process.env.MONGO_ATLAS_RW_URL || process.env.MONGO_LOCAL_URL ) && ( process.env.GITHUB_CLIENTID && process.env.GITHUB_CLIENTSECRET && process.env.MONGO_STORE_SESSION_URL_SECRET && process.env.MONGO_STORE_SESSION_SECRET ) )
     console.log("Environment variables in file .env not set. Please assign the ones like in the .env_example file for reference!");
 
-if ( process.env.DEBUG?.toLowerCase() )
+if ( process.env.DEBUG?.toLowerCase() === 'true' || process.env.DEBUG === 1 )
     console.log('DEBUG mode')
 
 export default {

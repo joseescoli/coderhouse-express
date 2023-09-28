@@ -1,8 +1,8 @@
 // Constante fs para el manejo de archivos
 import fs from 'fs';
 import prodmanager from '../manager/ProductManager.js'
-import { __dirname } from '../path.js';
-const prodList = new prodmanager( __dirname + '/fs/products.json')
+import { __dirname } from '../../path.js';
+const prodList = new prodmanager( __dirname + '/dao/fs/data/products.json')
 
 // Clase principal CartManager
 export default class CartManager {

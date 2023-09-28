@@ -1,4 +1,8 @@
 import bcrypt from 'bcrypt';
+import { fakerES as faker } from "@faker-js/faker";
+// import { faker } from "@faker-js/faker";
+// faker.locale = "es";
+
 
 /**
  * Función para la encripción de la contraseña con el módulo "bcrypt" usando el método hashSync. 
@@ -31,3 +35,27 @@ export const detectBrowser = (agent) => {
         return false;
     }
 }
+
+// Fuente de https://gist.github.com/solenoid/1372386
+const mongoObjectId = () => {
+    const timestamp = (new Date().getTime() / 1000 | 0).toString(16);
+    return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, () => {
+        return (Math.random() * 16 | 0).toString(16);
+    }).toLowerCase();
+};
+
+const mockProduct = () => ({
+    _id: mongoObjectId(),
+    title: faker.commerce.productName(),
+    description: faker.commerce.productDescription(),
+    // price: faker.commerce.price(),
+    price: faker.number.int({ min: 50, max: 1000 }),
+    category: faker.commerce.department(),
+    code: 'M' + faker.number.int({ min: 1, max: 1000 }),
+    stock: faker.number.int({ min: 0, max: 500 }),
+    status: faker.datatype.boolean(),
+    thumbnails: Array.from({ length: 3 }, () => faker.image.url()),
+  });
+  
+  export const createProductsMocking = (count = 100) =>
+    Array.from({ length: count }, mockProduct);

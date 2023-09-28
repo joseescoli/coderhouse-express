@@ -1,4 +1,4 @@
-import { detectBrowser } from "../utils.js";
+import { detectBrowser } from "../utils/utils.js";
 
 export const register = (req, res) => {
     res.render('register')

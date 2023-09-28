@@ -4,7 +4,7 @@ import { getAllService } from "../services/products.services.js";
 import config from "../config.js";
 
 // Función de detección de usuario interactivo o API (Navegador, API o consulta de endpoint)
-import { detectBrowser } from "../utils.js";
+import { detectBrowser } from "../utils/utils.js";
 
 export const listAllProdsView = async (req, res) => {
     try {
