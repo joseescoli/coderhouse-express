@@ -227,10 +227,10 @@ export const purchaseController = async(req, res) => {
             res.status(400).json({ message: 'Cart ID must be valid!' })
         else {
             const ticket = { purchaser: req.session.user.info.email, code: cid }
-            const amount = await purchaseCartService(ticket);
-            if ( amount ) {
-                console.log(`Products from cart purchased! Ticket CODE ${cid} is a reference for your purchase. Keep track or copy it! Total amount: $${amount}. An email will be sent with all these information.`)
-                res.status(200).json(`Products from cart purchased! Ticket CODE ${cid} is a reference for your purchase. Keep track or copy it! Total amount: $${amount}. An email will be sent with all these information.`)
+            const response = await purchaseCartService(ticket);
+            if ( response ) {
+                console.log(`Products from cart purchased! Ticket CODE ${cid} is a reference for your purchase. Keep track or copy it! Total amount: $${response.amount}. An email will be sent with all these information.`)
+                res.status(200).json( { message: `Products from cart purchased! Ticket CODE ${cid} is a reference for your purchase. Keep track or copy it! Total amount: $${response.amount}. An email will be sent with all these information.`, cart: response.cart} )
             }
             else {
                 console.log(`Cart ID: ${cid} not found or empty`)
