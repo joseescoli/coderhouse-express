@@ -251,11 +251,11 @@ async updateProdsCart(cid, prods) {
   }
   
   // Método para grabar la compra del carrito mediante su ID
-  async purchaseCart(ticket) {
+  async purchaseCart(cid) {
     try {
 
       // Carga de carrito actual para la compra
-      const cart = await this.getCartById(ticket.code);
+      const cart = await this.getCartById(cid);
 
       // Se comprueba que el carrito actual tenga productos para comprar
       if ( !cart || cart.products.length === 0 ) return false

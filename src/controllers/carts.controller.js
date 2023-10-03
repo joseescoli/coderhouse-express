@@ -1,4 +1,6 @@
 import { getAllService, getByIdService, createService, updateService, deleteByIdService, emptyCartService, updateProdCantService, addProdsService, purchaseCartService } from "../services/carts.services.js";
+import UserDao from "../dao/mongodb/managers/user.dao.js";
+const userDao = new UserDao()
 
 // Ruta TESTING todos los carritos
 export const getAllController = async(req, res) => {
@@ -268,7 +270,9 @@ export const emptyCartController = async(req, res) => {
 export const purchaseController = async(req, res) => {
     try {
         //const cid = Number(req.params.cid);
-        const cid = req.params.cid === req.session.user.info.cart ? req.params.cid : false
+        const user = await userDao.getByEmail(req.session.user.info.email)
+        const cart = (user.cart).toString()
+        const cid = req.params.cid === cart ? req.params.cid : false
         //if ( isNaN(cid) )
         if ( !cid ) {
             res.status(400).json({ message: 'Cart ID must be valid!' })

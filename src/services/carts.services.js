@@ -106,14 +106,14 @@ export const emptyCartService = async (cid) => {
 export const purchaseCartService = async (ticket) => {
   try {
     const response = {}
-    response.amount = await cartDao.purchaseCart(ticket)
-    if ( response ) {
+    response.amount = await cartDao.purchaseCart(ticket.code)
+    if ( response.amount ) {
       // console.log(response);
       await userDao.newCart(ticket.purchaser)
       await createTicketService( { ...ticket, amount: response.amount })
       response.cart = ( await userDao.getByEmail(ticket.purchaser) ).cart
-    }
-    return response
+      return response
+    } else return false
   } catch (error) {
     logger.error(error.message)
   }
