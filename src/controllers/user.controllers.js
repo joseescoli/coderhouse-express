@@ -24,7 +24,7 @@ export const registerUser = async(req, res) => {
             // res.redirect('/error-register')
 
     } catch (error) {
-        console.log(error);
+      req.logger.error(error.message)
     }
 
 };
@@ -56,13 +56,12 @@ export const loginUser = async(req, res) => {
             res.redirect('/error-login')
 
     } catch (error) {
-        console.log(error);
+      req.logger.error(error.message)
     }
 };
 
 export const githubLogin = async (req, res, next) => {
     try {
-      // console.log("\nreq.user: " + req.user)
       if ( req.user && req.session?.passport?.user ) {
         req.session.user = {
           loggedIn: true,
@@ -84,7 +83,7 @@ export const githubLogin = async (req, res, next) => {
         res.redirect('/error-login')
 
       } catch (error) {
-        console.log(error);
+        req.logger.error(error.message)
         // next(error.message);
     }
   };

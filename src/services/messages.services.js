@@ -1,3 +1,4 @@
+import { logger } from "../utils/logger.js";
 import MessagesDaoMongoDB from "../dao/mongodb/managers/messages.dao.js"
 const msgDao = new MessagesDaoMongoDB();
 
@@ -6,7 +7,7 @@ export const getAllService = async () => {
     const response = await msgDao.getAllMessages();
     return response;
   } catch (error) {
-    console.log(error);
+    logger.error(error.message)
   }
 }
 
@@ -15,7 +16,7 @@ export const getByIdService = async (id) => {
     const response = await msgDao.getMessageById(id);
     return response;
   } catch (error) {
-    console.log(error);
+    logger.error(error.message)
   }
 }
 
@@ -27,7 +28,7 @@ export const createService = async (obj) => {
     const response = await msgDao.createMessage(message);
     return response;
   } catch (error) {
-    console.log(error);
+    logger.error(error.message)
   }
 }
 
@@ -36,7 +37,7 @@ export const updateService = async (id, obj) => {
     await msgDao.updateMessage(id, obj);
     return obj;
   } catch (error) {
-    console.log(error);
+    logger.error(error.message)
   }
 }
 
@@ -45,7 +46,7 @@ export const deleteByIdService = async (id) => {
     const response = await msgDao.deleteMessage(id);
     return response;
   } catch (error) {
-    console.log(error);
+    logger.error(error.message)
   }
 }
 
@@ -54,7 +55,7 @@ try {
   const response = await msgDao.deleteAllProducts();
   return response;
 } catch (error) {
-  console.log(error);
+  logger.error(error.message)
 }
 
 }

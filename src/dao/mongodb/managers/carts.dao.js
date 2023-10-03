@@ -2,6 +2,8 @@
 import { cartsModel } from "../models/carts.model.js";
 // Llamadas de métodos de productos
 import ProductsDaoMongoDB from "./products.dao.js";
+// Incorporación de logger
+import { logger } from "../../../utils/logger.js";
 
 // Exportación y definición de clase principal de manejo de carritos
 export default class CartsDaoMongoDB {
@@ -16,7 +18,7 @@ export default class CartsDaoMongoDB {
       const response = await cartsModel.find({});
       return response;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
 
@@ -26,7 +28,7 @@ export default class CartsDaoMongoDB {
       const response = await cartsModel.findById(id).populate("products.product");
       return response;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
 
@@ -36,7 +38,7 @@ export default class CartsDaoMongoDB {
       const response = await cartsModel.create(obj)
       return response;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
 
@@ -52,7 +54,7 @@ export default class CartsDaoMongoDB {
         return false
       }
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
 
@@ -76,7 +78,7 @@ export default class CartsDaoMongoDB {
             return true
           }
           else {
-            console.log( `Product ID: ${pid} out of stock!. Max: ${product.stock}` );
+            logger.debug( `Product ID: ${pid} out of stock!. Max: ${product.stock}` );
             return false
           }
         } else {
@@ -113,18 +115,18 @@ export default class CartsDaoMongoDB {
             return true
           }
           else {
-            console.log( `Product ID: ${pid} out of stock or inactive!` );
+            logger.debug( `Product ID: ${pid} out of stock or inactive!` );
             return false
           }
         }
         else {
           // Al no encontrarse el producto en el carrito y llamarse a la operación de quitado del producto se da aviso de lo incompatible
-          console.log( `Product ID: ${pid} not added to cart!` );
+          logger.debug( `Product ID: ${pid} not added to cart!` );
           return false
         }
       }
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
 
@@ -150,7 +152,7 @@ export default class CartsDaoMongoDB {
               return 1
             }
             else {
-              console.log( `Product ID: ${pid} out of stock!. Max: ${product.stock}` );
+              logger.debug( `Product ID: ${pid} out of stock!. Max: ${product.stock}` );
               return -1
             }
           } else {
@@ -161,7 +163,7 @@ export default class CartsDaoMongoDB {
               return 1
             }
             else {
-              console.log( `Product ID: ${pid} out of stock!. Max: ${product.stock}` );
+              logger.debug( `Product ID: ${pid} out of stock!. Max: ${product.stock}` );
               return -1
             }            
           }
@@ -174,13 +176,13 @@ export default class CartsDaoMongoDB {
               return 1
             }
             else {
-              console.log( `Product ID: ${pid} out of stock or inactive!` );
+              logger.debug( `Product ID: ${pid} out of stock or inactive!` );
               return -1
             }
         }
     }
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
 
@@ -234,7 +236,7 @@ async updateProdsCart(cid, prods) {
       const response = await cartsModel.findByIdAndDelete(id);
       return response
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
   
@@ -244,7 +246,7 @@ async updateProdsCart(cid, prods) {
       const response = await cartsModel.deleteMany({})
       return response;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
   
@@ -282,7 +284,7 @@ async updateProdsCart(cid, prods) {
           await cart.save()
         }
         
-        // console.log("\n\nCarrito actual:\n" + (await this.getCartById(ticket.code)).products);
+        // logger.debug("\n\nCarrito actual:\n" + (await this.getCartById(ticket.code)).products);
 
         // Se calcula el monto del carrito para informar al usuario
         const amount = cartFilter.reduce( ( subtotal, item ) => subtotal + item.quantity * item.product.price, 0 )
@@ -290,7 +292,7 @@ async updateProdsCart(cid, prods) {
         return amount
       }  
     } catch (error) {
-    console.log(error);
+      logger.error(error.message)
     }
   }
 

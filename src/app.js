@@ -1,6 +1,11 @@
 // Configuración general del servidor en variables de entorno
 import config from './config.js';
 
+// Incorporación de winston como logger
+import { logger } from './utils/logger.js';
+// Incorporación de winston como logger middleware HTTP
+import { loggerHTTP } from './middlewares/loggerHttp.js';
+
 // Conexión a base de datos MongoDB Atlas
 import { dbConnect, dbDisconnect } from './dao/mongodb/dbconnection.js';
 dbConnect()
@@ -47,6 +52,9 @@ app.use(session(mongoStoreOption));
 import { errorHandler } from './middlewares/errorHandler.js'
 app.use(errorHandler);
 
+// Middleware de logger http y agregado de logger a express en "req.logger"
+app.use(loggerHTTP)
+
 // Incluyendo módulos Passport, Passport Local y Passport Github a Express
 app.use(passport.initialize());
 app.use(passport.session());
@@ -66,7 +74,7 @@ app.use('/', allRoutes.getRoutes())
 
 // Inicialización de servicio Express
 const httpServer = app.listen(config.PORT, ()=>{
-    console.log(`Server started at port: ${config.PORT}`);
+    logger.debug(`Server started at port: ${config.PORT}`);
 });
 
 // Anexo de servicio de WebSocket a servidor Express
@@ -77,16 +85,16 @@ app.set("io", socketServer)
 
 // Configuración y definiciones de servicio WebSocket
 socketServer.on('connection', async (socket) => {
-    console.log(`Client connected: ${socket.id} // ${socket.handshake.address} // ${socket.handshake.time}`);
+    logger.debug(`Client connected: ${socket.id} // ${socket.handshake.address} // ${socket.handshake.time}`);
 
     // Controla cuando un cliente se desconecta y retorna mensaje
     socket.on('disconnect', () => {
-        console.log('Client disconnected!');
+        logger.debug('Client disconnected!');
     })
 
     // Revisa si el cliente conectado envia el evento "msg1" y lo muestra
     socket.on('msg1', (message) => {
-        console.log( message );
+        logger.debug( message );
     })
 
     // Envía evento "msg1" al cliente conectado

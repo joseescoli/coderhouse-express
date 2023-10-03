@@ -3,6 +3,7 @@ const cartDao = new CartsDaoMongoDB();
 import UserDao from "../dao/mongodb/managers/user.dao.js"
 const userDao = new UserDao()
 import { createTicketService } from "./tickets.services.js";
+import { logger } from "../utils/logger.js";
 
 // Persistencia de archivos
 /* No se utilizará
@@ -16,7 +17,7 @@ export const getAllService = async () => {
       const response = await cartDao.getAllCarts();
       return response;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
 
@@ -25,7 +26,7 @@ export const getByIdService = async (id) => {
       const response = await cartDao.getCartById(id);
       return response;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
 
@@ -35,7 +36,7 @@ export const createService = async () => {
       const response = await cartDao.createCart(obj);
       return response;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
 
@@ -44,7 +45,7 @@ export const updateService = async (cid, pid, action) => {
       const response = await cartDao.updateCart(cid, pid, action);
       return response
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
 
@@ -54,14 +55,14 @@ export const addProdsService = async (cid, prods) => {
       //const response = await cartDao.updateProdsCart(cid, prods);
       await prods.map( async item => {
         const response = await cartDao.updateCantCart(cid, item.product, item.quantity, 'add')
-          console.log("MAP response: " + response)
+          // console.log("MAP response: " + response)
           if ( response === 1 ) result = 1
-          console.log("MAP result: " + result)
+          // console.log("MAP result: " + result)
         })
-        console.log("Result: " + result);
+        // console.log("Result: " + result);
         return (result === 1 ? true : false)
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
 
@@ -70,7 +71,7 @@ export const updateProdCantService = async (cid, pid, cant) => {
       const response = await cartDao.updateCantCart(cid, pid, cant, 'overwrite');
       return response
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
 
@@ -79,7 +80,7 @@ export const deleteByIdService = async (id) => {
       const response = await cartDao.deleteCart(id);
       return response;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
 
@@ -88,7 +89,7 @@ export const deleteAllService = async () => {
     const response = await cartDao.deleteAllCarts();
     return response;
   } catch (error) {
-    console.log(error);
+    logger.error(error.message)
   }
 
 }
@@ -98,7 +99,7 @@ export const emptyCartService = async (cid) => {
     const response = await cartDao.emptyCart(cid);
     return response;
   } catch (error) {
-    console.log(error);
+    logger.error(error.message)
   }
 }
 
@@ -114,6 +115,6 @@ export const purchaseCartService = async (ticket) => {
     }
     return response
   } catch (error) {
-    console.log(error);
+    logger.error(error.message)
   }
 }

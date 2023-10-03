@@ -1,6 +1,7 @@
 // Incorporación de capa de servicios de Productos
 import { getAllService } from "../services/products.services.js";
 
+// Incorporación de variables de entorno
 import config from "../config.js";
 
 // Función de detección de usuario interactivo o API (Navegador, API o consulta de endpoint)
@@ -11,7 +12,7 @@ export const listAllProdsView = async (req, res) => {
 
         // Se valida si el usuario está autenticado
         if ( req.session?.user?.info ) {
-            console.log(`User ${req.session.user.info.email} logged in!`);
+            req.logger.debug(`User ${req.session.user.info.email} logged in!`);
 
             const limit = req.query.limit ? Number(req.query.limit) : 2     // Definición de resultados por página
             const page = req.query.page ? Number(req.query.page) : 1        // Definición de página inicial
@@ -22,7 +23,6 @@ export const listAllProdsView = async (req, res) => {
                 status: 'Error',
                 error: 'limit/page params must be a number!',
                 message: error.message
-
             }) } 
             else {
 
@@ -78,6 +78,7 @@ export const listAllProdsView = async (req, res) => {
         
     } catch (error) {
         res.status(404).json({ message: error.message });
+        req.logger.error(error.message)
     }
 };
 
@@ -86,7 +87,7 @@ export const listAllApisView = async (req, res) => {
         res.status(200).render('apis')
     } catch (error) {
         res.status(400).json({ message: error.message });
-        console.log(error);
+        req.logger.error(error.message)
     }
 };
 
@@ -98,7 +99,7 @@ export const currentSession = async (req, res) => {
             res.status(401).json({status: 'false', session: 'Not logged in'})
     } catch (error) {
         res.status(400).json({ message: error.message });
-        console.log(error);
+        req.logger.error(error.message)
     }
 };
 
@@ -107,6 +108,7 @@ export const listAllProdsRealtimeView = async (req, res) => {
         res.render('realTimeProducts')
     } catch (error) {
         res.status(404).json({ message: error.message });
+        req.logger.error(error.message)
     }
 };
 
@@ -117,6 +119,22 @@ export const chatView = async (req, res) => {
         res.render('chat', {layout: 'chat-main', user: req.session.user.info.email})
     } catch (error) {
         res.status(404).json({ message: error.message });
+        req.logger.error(error.message)
+    }
+};
+
+export const loggerTest = async (req, res) => {
+    try {
+        res.status(200).send("Endpoint de pruebas de niveles de logger winston")
+        req.logger.debug("Nivel activo winston");
+        req.logger.http("Nivel activo winston");
+        req.logger.info("Nivel activo winston");
+        req.logger.warning("Nivel activo winston");
+        req.logger.error("Nivel activo winston");
+        req.logger.fatal("Nivel activo winston");
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+        req.logger.error(error.message);
     }
 };
 
@@ -125,6 +143,6 @@ export const pageNotFoundView = async (req, res) => {
         detectBrowser(req.get('User-Agent')) ? res.status(404).render('404') : res.status(404).send( '[404] - Page not found!' )
     } catch (error) {
         res.status(400).json({ message: error.message });
-        console.log(error);
+        req.logger.error(error.message)
     }
 };

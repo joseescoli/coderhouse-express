@@ -1,3 +1,4 @@
+import { logger } from '../utils/logger.js';
 import { createTransport } from 'nodemailer';
 // import templateHtml from './email/email.template.js';
 import config from '../config.js';
@@ -35,9 +36,9 @@ export const mailOptions = (destination) => {
 export const sendMailEthereal = async (email) => {
     try {
         const response = await transporter.sendMail(mailOptions(email));
-        console.log(response);
+        logger.debug(response);
         return response
     } catch (error) {
-        console.log(error);
+        logger.error(error.message)
     }
 }

@@ -6,6 +6,7 @@ const userDao = new UserDao();
 import CartsDaoMongoDB from '../dao/mongodb/managers/carts.dao.js';
 const cartDao = new CartsDaoMongoDB();
 import { sendMailEthereal } from '../services/email.services.js';
+import { logger } from '../utils/logger.js';
 
 const strategyOptions = {
     usernameField: 'email',
@@ -25,7 +26,7 @@ const register = async(req, email, password, done) => {
         await sendMailEthereal(email)
         return done(null, newUser);
     } catch (error) {
-        console.log(error);
+        logger.error(error.message)
         return done(error, false)
     }
 };
@@ -43,7 +44,7 @@ const login = async(req, email, password, done) => {
         else
             return done(null, userLogin);
     } catch (error) {
-        console.log(error);
+        logger.error(error.message)
         return done(error, false)
     }
 };

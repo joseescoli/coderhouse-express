@@ -1,3 +1,4 @@
+import { logger } from "../../../utils/logger.js";
 import { ticketModel } from "../models/ticket.model.js";
 
 export default class TicketsDaoMongoDB {
@@ -7,7 +8,7 @@ export default class TicketsDaoMongoDB {
       const response = await ticketModel.find({});
       return response;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
 
@@ -16,7 +17,7 @@ export default class TicketsDaoMongoDB {
       const response = await ticketModel.findById(id);
       return response;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
 
@@ -26,7 +27,7 @@ export default class TicketsDaoMongoDB {
       const response = await ticketModel.create(obj);
       return response;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
 
@@ -35,7 +36,7 @@ export default class TicketsDaoMongoDB {
       await ticketModel.updateOne({ _id: id }, obj);
       return obj;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
 
@@ -44,7 +45,7 @@ export default class TicketsDaoMongoDB {
       const response = await ticketModel.findByIdAndDelete(id);
       return response;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
 
@@ -53,7 +54,7 @@ export default class TicketsDaoMongoDB {
       const response = await ticketModel.deleteMany({})
       return response;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
 

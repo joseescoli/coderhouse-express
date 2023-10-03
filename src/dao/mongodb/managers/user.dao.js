@@ -1,3 +1,4 @@
+import { logger } from "../../../utils/logger.js";
 import { UserModel } from "../models/user.model.js";
 import { createHash, isValidPassword } from '../../../utils/utils.js';
 import CartsDaoMongoDB from "./carts.dao.js";
@@ -16,7 +17,7 @@ export default class UserDao {
                 return false;
 
         } catch (error) {
-            console.log(error);
+          logger.error(error.message)
         }
     };
 
@@ -26,14 +27,14 @@ export default class UserDao {
             const userExist = await this.getByEmail(email);
             if ( userExist ) {
                 const passValid = isValidPassword(password, userExist.password)
-                // console.log('PASS', passValid);
+                // logger.debug('PASS', passValid);
                 if ( !passValid ) return false
                 else return userExist
             }
             else
                 return false
         } catch (error) {
-            console.log(error);
+          logger.error(error.message)
         }
     };
 
@@ -43,7 +44,7 @@ export default class UserDao {
           if(userExist) return userExist
           else return false
         } catch (error) {
-          console.log(error)
+          logger.error(error.message)
           // throw new Error(error)
         }
       }
@@ -51,11 +52,11 @@ export default class UserDao {
       async getByEmail(email){
         try {
           const userExist = await UserModel.findOne({email}); 
-          // console.log(userExist);
+          // logger.debug(userExist);
           if(userExist) return userExist
           else return false
         } catch (error) {
-          console.log(error)
+          logger.error(error.message)
           throw new Error(error)
         }
       }
@@ -63,7 +64,7 @@ export default class UserDao {
       async newCart(email){
         try {
           const user = await UserModel.findOne({email}); 
-          // console.log(userExist);
+          // logger.debug(userExist);
           if(user) {
             user.cart = (await cartDao.createCart())._id
             user.save()
@@ -71,7 +72,7 @@ export default class UserDao {
           }
           else return false
         } catch (error) {
-          console.log(error)
+          logger.error(error.message)
           throw new Error(error)
         }
       }

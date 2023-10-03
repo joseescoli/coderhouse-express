@@ -10,7 +10,7 @@ if ( process.env.DEBUG?.toLowerCase() === 'true' || process.env.DEBUG === 1 )
     console.log('DEBUG mode')
 
 export default {
-    NODE_ENV: process.env.NODE_ENV,
+    NODE_ENV: process.env.NODE_ENV || 'development',
     PORT: process.env.PORT || 8080,
     MONGO_ATLAS_RW_URL: process.env.MONGO_ATLAS_RW_URL,
     MONGO_ATLAS_R_URL: process.env.MONGO_ATLAS_R_URL,

@@ -1,3 +1,4 @@
+import { logger } from "../utils/logger.js";
 import ProductsDaoMongoDB from "../dao/mongodb/managers/products.dao.js"
 const prodDao = new ProductsDaoMongoDB();
 import { createProductsMocking } from "../utils/utils.js";
@@ -14,7 +15,7 @@ export const getAllProds = async () => {
     const response = await prodDao.getAll();
     return response;
   } catch (error) {
-    console.log(error);
+    logger.error(error.message)
     throw new Error(error.message)
   }
 }
@@ -24,7 +25,7 @@ export const getAllService = async (limit, page, sort, query) => {
       const response = await prodDao.getAllProducts(limit, page, sort, query);
       return response;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
       throw new Error(error.message)
     }
   }
@@ -34,7 +35,7 @@ export const getByIdService = async (id) => {
       const response = await prodDao.getProductById(id);
       return response;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
       throw new Error(error.message)
     }
   }
@@ -44,7 +45,7 @@ export const createService = async (obj) => {
       const response = await prodDao.createProduct(obj);
       return response;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
       throw new Error(error.message)
     }
   }
@@ -53,7 +54,7 @@ export const updateService = async (id, obj) => {
     try {
       return await prodDao.updateProduct(id, obj);
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
       throw new Error(error.message)
     }
   }
@@ -63,7 +64,7 @@ export const deleteByIdService = async (id) => {
       const response = await prodDao.deleteProduct(id);
       return response;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
       throw new Error(error.message)
     }
   }
@@ -73,7 +74,7 @@ export const deleteAllService = async () => {
     const response = await prodDao.deleteAllProducts();
     return response;
   } catch (error) {
-    console.log(error);
+    logger.error(error.message)
     throw new Error(error.message)
   }
 
@@ -84,7 +85,7 @@ export const generateProductsMocking = async (cant) => {
     const products = createProductsMocking(cant)
     return products;
   } catch (error) {
-    console.log(error);
+    logger.error(error.message)
     throw new Error(error.message)
   }
 

@@ -71,15 +71,8 @@ export const getAllController = async (req, res) => {
         }
 
     } catch (error) {
-        console.log(error.stack);
+        req.logger.error(error.message)
         return httpResponse.NotFound(res, errorsConstants.PRODS_ERROR);
-        /*
-        res.status(404).json({
-            status: 'Error',
-            error: 'Error getting products!',
-            message: error.message
-        });
-        */
     }
 };
 
@@ -99,7 +92,7 @@ export const getByIdController = async (req, res) => {
                 return httpResponse.NotFound(res, errorsConstants.PROD_NOT_FOUND)
         }
     } catch (error) {
-        console.log(error.stack);
+        req.logger.error(error.message)
         return httpResponse.NotFound(res, error.message)
         // res.status(404).json({ message: error.message });
     }
@@ -128,7 +121,7 @@ export const createController = async (req, res) => {
         else
             return httpResponse.WrongInfo(res, errorsConstants.PROD_FIELDS_INVALID)
     } catch (error) {
-        console.log(error.stack);
+        req.logger.error(error.message)
         return httpResponse.WrongInfo(res, error.message)
     }
 };
@@ -173,7 +166,7 @@ export const updateController = async (req, res) => {
 //            }
         }
     } catch (error) {
-        console.log(error.stack);
+        req.logger.error(error.message)
         return httpResponse.NotFound(res, error.message)
     }
 };
@@ -199,7 +192,7 @@ export const deleteByIdController = async (req, res) =>{
                 return httpResponse.NotFound(res, errorsConstants.PROD_NOT_FOUND)
         }
     } catch (error) {
-        console.log(error.stack);
+        req.logger.error(error.message)
         return httpResponse.NotFound(res, error.message)
     }
 };
@@ -214,7 +207,7 @@ export const deleteAllController = async (req, res) =>{
         io.emit('products', products);
         return httpResponse.Ok(res, errorsConstants.PRODS_DEL)
     } catch (error) {
-        console.log(error.stack);
+        req.logger.error(error.message)
         return httpResponse.NotFound(res, error.message)
     }
 };
@@ -224,7 +217,6 @@ export const mockProducts = async (req, res) =>{
         const mockProds = await generateProductsMocking(100);
         return httpResponse.Ok(res, mockProds)
     } catch (error) {
-        console.log(error.stack);
         return httpResponse.NotFound(res, error.message)
     }
 };

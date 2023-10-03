@@ -37,7 +37,7 @@ export const profile = (req, res) => {
 
 export const logout = (req, res) => {
     if ( req.session?.user ) {
-        console.log(`User ${req.session.user.info.email} logged out!`);
+        req.logger.debug(`User ${req.session.user.info.email} logged out!`);
         delete req.session.user
         req.session.destroy( (err) => {
             if( !err ) {
@@ -47,7 +47,7 @@ export const logout = (req, res) => {
                 res.json({ msg: err });
         })
         req.logout( error => {
-            error ?? console.log(error)
+            error ?? req.logger.error(error.message)
         })
     }
     else

@@ -1,5 +1,8 @@
 // Incorporación de modelo productos de Mongoose para MongoDB
 import { productsModel } from "../models/products.model.js";
+// Incorporación de logger
+import { logger } from "../../../utils/logger.js";
+
 // Exportación y definición de clase principal de manejo de productos
 export default class ProductsDaoMongoDB {
 
@@ -21,7 +24,7 @@ export default class ProductsDaoMongoDB {
       const response = await productsModel.find({});
       return response;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
 
@@ -67,7 +70,7 @@ export default class ProductsDaoMongoDB {
 
       return response;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
 
@@ -77,7 +80,7 @@ export default class ProductsDaoMongoDB {
       const response = await productsModel.findById(id);
       return response;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
 
@@ -86,7 +89,7 @@ export default class ProductsDaoMongoDB {
       const response = productsModel.find({_id: id}, {stock: 1, _id: 0}).lean()
       return response
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
 
@@ -96,7 +99,7 @@ export default class ProductsDaoMongoDB {
       const response = await productsModel.find({_id: ids});
       return response;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
 
@@ -109,15 +112,15 @@ export default class ProductsDaoMongoDB {
             const response = await productsModel.create(product);
             return response
         } else {
-            console.log('One or several attributes do not have proper information. Please, verify!');
+            logger.debug('One or several attributes do not have proper information. Please, verify!');
             return false
         }
       } else {
-          console.log('Duplicate "code" attribute! Please, choose another!');
+          logger.debug('Duplicate "code" attribute! Please, choose another!');
           return false
       }
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
 
@@ -133,30 +136,30 @@ export default class ProductsDaoMongoDB {
 
               const response = await productsModel.updateOne({ _id: id }, obj);
               if (response) {
-                console.log( "Product updated!" );
+                logger.debug( "Product updated!" );
                 return true;
               }
 
             } else {
-                console.log('Duplicate "code" attribute! Please, choose another!');
+                logger.debug('Duplicate "code" attribute! Please, choose another!');
                 return false
             }
 
         } else {
           const response = await productsModel.updateOne({ _id: id }, obj);
           if (response) {
-            console.log( "Product updated!" );
+            logger.debug( "Product updated!" );
             return true;
           }
         }
 
       } else {
-        console.log(`Product ID ${id} not found!`);
+        logger.debug(`Product ID ${id} not found!`);
         return false
       }
       
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
 
@@ -164,10 +167,10 @@ export default class ProductsDaoMongoDB {
   async deleteProduct(id) {
     try {
       const response = await productsModel.findByIdAndDelete(id);
-      console.log( `Product ID: ${id} removed!` );
+      logger.debug( `Product ID: ${id} removed!` );
       return response;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
 
@@ -177,7 +180,7 @@ export default class ProductsDaoMongoDB {
       const response = await productsModel.deleteMany({})
       return response;
     } catch (error) {
-      console.log(error);
+      logger.error(error.message)
     }
   }
 
