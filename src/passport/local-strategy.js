@@ -23,7 +23,7 @@ const register = async(req, email, password, done) => {
         // const { first_name, last_name,... } = req.body
         const obj = { ...req.body, cart: cart._id }
         const newUser = await userDao.registerUser( obj );
-        await sendMailEthereal(email)
+        await sendMailEthereal( { destination: email, service: 'reg' } )
         return done(null, newUser);
     } catch (error) {
         logger.error(error.message)

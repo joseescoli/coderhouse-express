@@ -1,16 +1,17 @@
-import bcrypt from 'bcrypt';
+import { hashSync, genSaltSync, compareSync } from 'bcrypt';
 import { fakerES as faker } from "@faker-js/faker";
 // import { faker } from "@faker-js/faker";
 // faker.locale = "es";
+import { randomBytes } from 'crypto';
 
-
+export const resetToken = async () => randomBytes(32).toString('hex');
 /**
  * Función para la encripción de la contraseña con el módulo "bcrypt" usando el método hashSync. 
  * Recibe contraseña sin encriptar y retorna la contraseña encriptada
  * @param password String
  * @returns Retorna contraseña encriptada/hasheada
  */
-export const createHash = password => bcrypt.hashSync(password, bcrypt.genSaltSync(10));
+export const createHash = password => hashSync(password, genSaltSync(10));
 
 /**
  * 
@@ -18,7 +19,7 @@ export const createHash = password => bcrypt.hashSync(password, bcrypt.genSaltSy
  * @param {*} user 2° parámetro recibe contraseña almacenada en base de datos (hasheada).
  * @returns boolean
  */
-export const isValidPassword = (password, dbpass) => bcrypt.compareSync(password, dbpass);
+export const isValidPassword = (password, dbpass) => compareSync(password, dbpass);
 
 export const detectBrowser = (agent) => {
     if(agent.match(/chrome|chromium|crios/i)){

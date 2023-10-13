@@ -47,7 +47,7 @@ export const logout = (req, res) => {
                 res.json({ msg: err });
         })
         req.logout( error => {
-            error ?? req.logger.error(error.message)
+            error ? req.logger.error(error.message) : res.redirect('/login')
         })
     }
     else

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { loginUser, registerUser, githubLogin } from "../controllers/user.controllers.js"
+import { loginUser, registerUser, githubLogin, passwordReset, passwordForm, password, passwordResetForm } from "../controllers/user.controllers.js"
 import passport from "passport";
 
 const router = Router();
@@ -20,43 +20,24 @@ router.post('/register', passport.authenticate('register',
 // Login passport local
 router.post('/login', passport.authenticate('login'), loginUser);
 
-// Login passport local con params
-/*
-router.post('/login', passport.authenticate('login',
-    {
-    successRedirect: "/",
-    failureRedirect: "/error-login",
-    passReqToCallback: true,
-    })
-);
-*/
-
 // GitHub Register OAUTH
 router.get('/oauth/github', passport.authenticate('github'));
 // router.get('/oauth/github', passport.authenticate('github', { scope: ['user:email'] }));
 
 // GitHub Login
 router.get('/github', passport.authenticate('github'), githubLogin);
-// router.get('/github', passport.authenticate('github', { scope: ['user:email'] }), githubLogin);
 
-/*
-// GitHub Login con params
-router.get('/github', passport.authenticate('github', {
-    scope: ['user:email'],
-    failureRedirect: '/errorLogin',
-    successRedirect: '/',
-    passReqToCallback: true
-}));
-*/
+// Formulario de solicitud de reseteo de contraseña. Pedido de correo.
+router.get('/password/reset', passwordResetForm);
 
-// Logout del sitio
-/*
-router.get('/logout', (req, res) => {
-    req.logout( (err) => {
-        if(err) return res.send(err)
-        else res.redirect('/login')
-    })
-})
-*/
+// Solicitud de reseteo de contraseña. Envio de correo
+router.post('/password/reset', passwordReset);
+
+// Cambio efectivo de contraseña por formulario
+router.get('/password/change', passwordForm);
+
+// PUT request con el cambio de contraseña. Esto es luego de superar el formulario o haber pasado por query param la variable token con el correcto recibido por correo
+router.post('/password/change', password);
+
 
 export default router;

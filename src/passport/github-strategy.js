@@ -40,7 +40,7 @@ const registerOrLogin = async (accessToken, refreshToken, profile, done) => {
             cart: cart._id
         });
         // console.log("\n\nUsuario registrado: " + newUser);
-        await sendMailEthereal(email)
+        await sendMailEthereal( { destination: email, service: 'reg' } )
         return done(null, newUser);
     }
 }

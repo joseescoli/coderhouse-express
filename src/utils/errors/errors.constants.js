@@ -14,5 +14,7 @@ export default {
     PROD_FIELDS_INVALID: 'Invalid product attributes. Verify all fields are complete and avoid duplicate code!. [Fields required: title, description, price, code, stock, category]',
     UNAUTHORIZED: 'Unauthorized!',
     NO_ROLE: '[401] - Not authorized. Missing required role!',
-    SERVER_ERROR: 'Internal server error'
+    SERVER_ERROR: 'Internal server error',
+    INFO_INCORRECT: 'Incorrect information',
+    USER_NOT_FOUND: 'User not found!'
 }

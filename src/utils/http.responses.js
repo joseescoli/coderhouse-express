@@ -22,7 +22,7 @@ export class HttpResponse {
     };
 
     WrongInfo(res, data){
-        logger.warning(errorsConstants.PROD_ID_WRONG)
+        logger.warning(errorsConstants.INFO_INCORRECT)
         return res.status(HttpStatus.WRONG_INFO).json({
             status: HttpStatus.WRONG_INFO,
             message: 'Wrong information provided',
@@ -31,7 +31,7 @@ export class HttpResponse {
     }
 
     NotFound(res, data){
-        logger.warning(errorsConstants.PROD_NOT_FOUND)
+        logger.warning(errorsConstants.INFO_INCORRECT)
         return res.status(HttpStatus.NOT_FOUND).json({
             status: HttpStatus.NOT_FOUND,
             message: 'Not Found',

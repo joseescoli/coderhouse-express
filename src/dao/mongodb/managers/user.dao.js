@@ -76,5 +76,36 @@ export default class UserDao {
           throw new Error(error)
         }
       }
-      
+
+      async passChange(id, pass){
+        try {
+          const user = await this.getById(id)
+          if(user) {
+            user.password = pass
+            user.save()
+            return true
+          }
+          else return false
+        } catch (error) {
+          logger.error(error.message)
+          throw new Error(error)
+        }
+      }
+
+      async changeRoleById(id) {
+        try {
+          const user = await this.getById(id)
+          if( user && ( user.role === 'premium' || user.role === 'user') ) {
+            const role = user.role === 'user' ? 'premium' : 'user'
+            user.role = role
+            user.save()
+            return role
+          }
+          else return false
+        } catch (error) {
+          logger.error(error.message)
+          throw new Error(error)
+        }
+      }
+
 }

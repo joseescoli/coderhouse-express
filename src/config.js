@@ -25,5 +25,7 @@ export default {
     FAKEMAIL: process.env.FAKEMAIL,
     PASSWORD: process.env.PASSWORD,
     NAME: process.env.NAME,
-    DEBUG: process.env.DEBUG?.toLowerCase()
+    DEBUG: process.env.DEBUG?.toLowerCase(),
+    // En caso de no definirse establecerse por defecto en 1 hora (3600 segundos)
+    RESET_TOKEN_EXPIRATION: process.env.RESET_TOKEN_EXPIRATION || 3600
 }

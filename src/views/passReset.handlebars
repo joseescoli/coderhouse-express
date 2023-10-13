@@ -1,0 +1,17 @@
+<h1>Password RESET FORM</h1>
+<br><br>
+<p>Dear user, this is a password reset form.</p>
+<p>You are here since you forgot your password and you need to reset it.</p>
+<br>
+<p>To do so, we need you to fill in you email address. Prior to continue with this operation we will validate if you are a registered user.</p>
+<p>After this verification, an email will be sent to your email address with a link along with a token for the password reset to take effect. This token will expire in one hour. It is important that you keep this in mind.</p>
+<h2>Please, type in your email address:</h2>
+<form action='/password/reset' method='post'>
+  <input type='email' name='email' id='email' />
+  <input type='submit' value='SEND' />
+</form>
+<br>
+<button onclick="location.href='/'">Home</button>
+<br>
+<br>
+<p>- If you have any doubts or concerns, please, contact us to our communication channels.-</p>

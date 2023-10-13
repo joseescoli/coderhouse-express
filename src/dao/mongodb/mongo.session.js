@@ -2,7 +2,7 @@ import MongoStore from 'connect-mongo';
 import { connectionString } from './dbconnection.js';
 import config from '../../config.js';
 
-// Definición de alamacenamiento de sesiones en MongoDB
+// Definición de almacenamiento de sesiones en MongoDB
 export const mongoStoreOption = {
     store:MongoStore.create({
             mongoUrl: connectionString,

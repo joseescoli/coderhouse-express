@@ -1,0 +1,15 @@
+<h1>Password CHANGE - Token accepted!</h1>
+<br><br>
+<p>Dear user, this is a password change form.</p>
+<p>You are here since you clicked a link received at your email account. Since you forgot your password you can change it below.</p>
+<br>
+<p>To do so, please, fill the required fields below:</p>
+<h2>Please, type in your new password:</h2>
+<form action="/password/change?email={{email}}" method='post'>
+Password: <input type='password' name='password' id='pass' />
+<br>
+Repeat password: <input type='password' name='password2' id='pass2' />
+<input type='submit' value='SEND' />
+</form>
+<br>
+<p>- If you have any doubts or concerns, please, contact us to our communication channels.-</p>
