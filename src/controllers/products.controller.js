@@ -108,7 +108,10 @@ export const createController = async (req, res) => {
         if ( req.body.thumbnails )
             thumbnails.push(...req.body.thumbnails)
         
-        const product = { title, description, code, price, stock, category, thumbnails }
+        const product = req.session?.user?.info?.email ?
+                                                        { title, description, code, price, stock, category, thumbnails, owner: req.session?.user?.info?.email }
+                                                        :
+                                                        { title, description, code, price, stock, category, thumbnails }
 
         const newProduct = await createService(product);
         if(newProduct) {
@@ -133,11 +136,11 @@ export const updateController = async (req, res) => {
         if ( !req.params.pid || !isNaN(req.params.pid))
             return httpResponse.WrongInfo(res, errorsConstants.PROD_ID_WRONG)
         else {
-//            if ( isNaN( Number( req.params.pid) ) )
-//                res.status(400).json({ message: 'Product ID must be a number!' })
-//            else {
-                //const pid = Number(req.params.pid)
-                const pid = req.params.pid
+            const pid = req.params.pid
+            const owner = (await getByIdService(pid)).owner
+            if ( req.session.user.info.role === 'premium' && owner !== req.session.user.info.email && !(config.DEBUG) )
+                return httpResponse.Unauthorized(res, errorsConstants.NOT_OWNER)
+            else {
                 const updateFields = {}
                 if ( req.body.title) updateFields.title = String(req.body.title)
                 if ( req.body.description) updateFields.description = String(req.body.description)
@@ -163,7 +166,7 @@ export const updateController = async (req, res) => {
                 }
                 else
                     return httpResponse.WrongInfo(res, errorsConstants.PROD_DUPLICATE)
-//            }
+           }
         }
     } catch (error) {
         req.logger.error(error.message)
@@ -174,22 +177,25 @@ export const updateController = async (req, res) => {
 export const deleteByIdController = async (req, res) =>{
     try {
         const io = req.app.get("io");
-        //const pid = Number(req.params.pid);
         const pid = req.params.pid
-        //if ( isNaN(pid) )
         if ( !pid )
-            return httpResponse.WrongInfo(res, errorsConstants.PROD_NUMBER)
+            return httpResponse.WrongInfo(res, errorsConstants.PROD_ID_WRONG)
         else {
-            const prodDel = await deleteByIdService(pid);
-            if(prodDel) {
-                let products = await getAllService()
-                products = products.map(item => item.toJSON())
-                // Envía el evento "products" a todos los clientes conectados con la lista actualizada de productos
-                io.emit('products', products);
-                return httpResponse.Ok(res, errorsConstants.PROD_ID_DEL)
+            const owner = (await getByIdService(pid)).owner
+            if ( req.session.user.info.role === 'premium' && owner !== req.session.user.info.email && !(config.DEBUG) )
+                return httpResponse.Unauthorized(res, errorsConstants.NOT_OWNER)
+            else {
+                const prodDel = await deleteByIdService(pid);
+                if(prodDel) {
+                    let products = await getAllService()
+                    products = products.map(item => item.toJSON())
+                    // Envía el evento "products" a todos los clientes conectados con la lista actualizada de productos
+                    io.emit('products', products);
+                    return httpResponse.Ok(res, errorsConstants.PROD_ID_DEL)
+                }
+                else
+                    return httpResponse.NotFound(res, errorsConstants.PROD_NOT_FOUND)
             }
-            else
-                return httpResponse.NotFound(res, errorsConstants.PROD_NOT_FOUND)
         }
     } catch (error) {
         req.logger.error(error.message)
@@ -200,7 +206,7 @@ export const deleteByIdController = async (req, res) =>{
 export const deleteAllController = async (req, res) =>{
     try {
         const io = req.app.get("io");
-        await deleteAllService();
+        req.session.user.info.role === 'premium' && !(config.DEBUG) ? await deleteAllService( req.session.user.info.email ) : await deleteAllService();
         let products = await getAllService()
         products = products.map(item => item.toJSON())
         // Envía el evento "products" a todos los clientes conectados con la lista actualizada de productos

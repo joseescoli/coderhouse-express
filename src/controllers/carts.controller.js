@@ -1,6 +1,11 @@
 import { getAllService, getByIdService, createService, updateService, deleteByIdService, emptyCartService, updateProdCantService, addProdsService, purchaseCartService } from "../services/carts.services.js";
+import { getByIdService as getProdById } from "../services/products.services.js";
 import UserDao from "../dao/mongodb/managers/user.dao.js";
 const userDao = new UserDao()
+import { HttpResponse } from "../utils/http.responses.js";
+const httpResponse = new HttpResponse()
+import errorsConstants from "../utils/errors/errors.constants.js";
+import config from "../config.js";
 
 // Ruta TESTING todos los carritos
 export const getAllController = async(req, res) => {
@@ -8,15 +13,13 @@ export const getAllController = async(req, res) => {
         const carts = await getAllService()
         
         if(carts.length){
-            res.status(200).json({ message: 'Carts found', carts })
+            return httpResponse.Ok(res, { info: errorsConstants.CARTS_FOUND, payload: carts })
         } else {
-            res.status(400).send('Carts not found')
-            req.logger.warning('Carts not found')
+            return httpResponse.NotFound(res, errorsConstants.CARTS_NOT_FOUND)
         }
         
     } catch (error) {
-        res.status(404).json({ message: error.message });
-        req.logger.error(error.message)
+        return httpResponse.ServerError(res, error.message)
     }
 };
 
@@ -27,21 +30,19 @@ export const getByIdController = async(req, res) => {
         const cid = req.params.cid
         //if ( isNaN(cid) )
         if ( !cid ) {
-            res.status(400).json({ message: 'Cart ID must be a number!' })
-            req.logger.warning(`Cart ID must be number. CART ID: ${cid}`)
+            req.logger.debug(`Cart ID must be number. CART ID: ${cid}`)
+            return httpResponse.WrongInfo(res, 'Wrong Cart ID!')
         }
         else {
             const cart = await getByIdService(cid)
             if (cart)
-                res.status(200).json({ message: 'Cart found', cart })
+                return httpResponse.Ok(res, { info: errorsConstants.CART_FOUND, payload: cart })
             else {
-                res.status(400).send('Cart not found')
-                req.logger.warning(`${cid} not found!`)
+                return httpResponse.WrongInfo(res, `${cid} not found!`)
             }
         }
     } catch (error) {
-        res.status(404).json({ message: error.message });
-        req.logger.error(error.message)
+        return httpResponse.ServerError(res, error.message)
     }
 };
 
@@ -56,8 +57,7 @@ export const createController = async (req, res) => {
                 req.logger.warning('Wrong cart information provided!')
             }
     } catch (error) {
-        res.status(404).json({ message: error.message });
-        req.logger.error(error.message)
+        return httpResponse.ServerError(res, error.message)
     }
 };
 
@@ -77,32 +77,32 @@ export const updateProdCantController = async (req, res) => {
                 req.logger.warning(`Product quantity ${cant} wrong format.`)
             }
         
-        //if ( isNaN(cid) )
         if ( !cid ) {
             res.status(400).json({ message: 'Cart ID must be a number!' })
             req.logger.warning(`Wrong cart ${cid} specified.`)
         }
-        //if ( isNaN(pid) )
         if ( !pid ) {
             res.status(400).json({ message: 'Product ID must be a number!' })
             req.logger.warning(`Wrong product ID ${pid} specified.`)
         }
 
-        
-
-        //if ( !isNaN(cid) && !isNaN(pid)){
         if ( cid && pid && cant) {
-            const newCart = await updateProdCantService(cid, pid, cant);
-            if(newCart === 1)
-                res.status(200).json("Product added to cart!");
-            else if ( newCart === 0) {
-                    res.status(404).json({ message: "Cart not found!" })
-                    req.logger.warning(`Cart ID ${cid} not found!`)
-                }
-                else {
-                    res.status(400).json({ message: "Product stock exceeded! Check product stock!" })
-                    req.logger.warning(`Quantity ${cant} exceeds for product ID ${pid} stock!`)
-                }
+            const owner = (await getProdById(pid)).owner
+            if ( req.session.user.info.role === 'premium' && owner === req.session.user.info.email && !(config.DEBUG) )
+                return httpResponse.Unauthorized(res, errorsConstants.CART_NO_ADD_PREMIUM)
+            else {
+                const newCart = await updateProdCantService(cid, pid, cant);
+                if(newCart === 1)
+                    res.status(200).json("Product added to cart!");
+                else if ( newCart === 0) {
+                        res.status(404).json({ message: "Cart not found!" })
+                        req.logger.warning(`Cart ID ${cid} not found!`)
+                    }
+                    else {
+                        res.status(400).json({ message: "Product stock exceeded! Check product stock!" })
+                        req.logger.warning(`Quantity ${cant} exceeds for product ID ${pid} stock!`)
+                    }
+            }
         }
     } catch (error) {
         res.status(404).json({ message: error.message });
@@ -115,7 +115,8 @@ export const addProdsController = async (req, res) => {
     try {
         const cid = req.params.cid
 
-        const products = req.body
+        const products = []
+        products.push(req.body)
 
         /*  Ejemplo de BODY a enviar
         [
@@ -136,12 +137,17 @@ export const addProdsController = async (req, res) => {
             req.logger.warning('Request body infomation missing!')
         }
         else {
-            const newCart = await addProdsService(cid, products);
-            if(newCart === 1)
-                res.status(200).json("Product added to cart!");
+            const checkOwner = products.some( async prod => ( await getProdById(prod) ).owner === req.session.user.info.email )
+            if ( req.session.user.info.role === 'premium' && checkOwner && !(config.DEBUG) )
+                return httpResponse.Unauthorized(res, errorsConstants.CART_NO_ADD_PREMIUM)
             else {
-                res.status(400).json({ message: "Invalid cart or product!" });
-                req.logger.warning('Cart or product invalid in requesat body!')
+                const newCart = await addProdsService(cid, products);
+                if(newCart === 1)
+                    res.status(200).json("Product added to cart!");
+                else {
+                    res.status(400).json({ message: "Invalid cart or product!" });
+                    req.logger.warning('Cart or product invalid in requesat body!')
+                }
             }
         }
     } catch (error) {
@@ -153,29 +159,30 @@ export const addProdsController = async (req, res) => {
 // Alta o sumatoria de nuevo producto en carrito preexistente
 export const updateController = async (req, res) => {
     try {
-        //const cid = Number(req.params.cid);
         const cid = req.params.cid
-        //const pid = Number(req.params.pid);
         const pid = req.params.pid
-        //if ( isNaN(cid) )
         if ( !cid ) {
             res.status(400).json({ message: 'Cart ID must be a number!' })
             req.logger.warning(`Wrong cart ${cid} specified.`)
         }
-        //if ( isNaN(pid) )
         if ( !pid ) {
             res.status(400).json({ message: 'Product ID must be a number!' })
             req.logger.warning(`Wrong product ID ${pid} specified.`)
         }
 
-        //if ( !isNaN(cid) && !isNaN(pid)){
         if ( cid && pid){
-            const newCart = await updateService(cid, pid, "+");
-            if(newCart)
-                res.status(200).json("Product added to cart!");
+
+            const owner = (await getProdById(pid)).owner
+            if ( req.session.user.info.role === 'premium' && owner === req.session.user.info.email && !(config.DEBUG) )
+                return httpResponse.Unauthorized(res, errorsConstants.CART_NO_ADD_PREMIUM)
             else {
-                res.status(400).json({ message: "Invalid cart or product!" });
-                req.logger.warning(`Invalid cart ${cid} or product ID ${pid} specified.`)
+                const newCart = await updateService(cid, pid, "+");
+                if(newCart)
+                    res.status(200).json("Product added to cart!");
+                else {
+                    res.status(400).json({ message: "Invalid cart or product!" });
+                    req.logger.warning(`Invalid cart ${cid} or product ID ${pid} specified.`)
+                }
             }
         }
     } catch (error) {

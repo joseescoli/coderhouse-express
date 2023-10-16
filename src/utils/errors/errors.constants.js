@@ -8,7 +8,11 @@ export default {
     PRODS_NOT_FOUND: 'Products not found!',
     PRODS_ERROR: 'Error getting products!',
     PRODS_DEL: 'Products deleted successfully!',
+    CART_FOUND: 'Cart ID found!',
     CART_NO_FOUND: 'Cart not found!',
+    CARTS_FOUND: 'Carts found!',
+    CARTS_NOT_FOUND: 'Carts not found!',
+    CART_NO_ADD_PREMIUM: 'Premium user is not the product owner. Therefore no changes allowed!',
     ID_WRONG: 'Incorrect ID!',
     LIMIT_PAGE_NUMBER: 'limit/page params must be a number!',
     PROD_FIELDS_INVALID: 'Invalid product attributes. Verify all fields are complete and avoid duplicate code!. [Fields required: title, description, price, code, stock, category]',
@@ -16,5 +20,6 @@ export default {
     NO_ROLE: '[401] - Not authorized. Missing required role!',
     SERVER_ERROR: 'Internal server error',
     INFO_INCORRECT: 'Incorrect information',
-    USER_NOT_FOUND: 'User not found!'
+    USER_NOT_FOUND: 'User not found!',
+    NOT_OWNER: 'Premium user is not the product owner. Therefore no changes allowed!'
 }

@@ -58,7 +58,7 @@ export class HttpResponse {
     };
 
     ServerError(res, data){
-        logger.error(errorsConstants.SERVER_ERROR)
+        logger.error(`${errorsConstants.SERVER_ERROR}: ${data}`)
         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
             status: HttpStatus.INTERNAL_SERVER_ERROR,
             message: 'Internal Server Error',

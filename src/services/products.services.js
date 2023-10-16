@@ -69,9 +69,9 @@ export const deleteByIdService = async (id) => {
     }
   }
 
-export const deleteAllService = async () => {
+export const deleteAllService = async (email) => {
   try {
-    const response = await prodDao.deleteAllProducts();
+    const response = await prodDao.deleteAllProducts(email);
     return response;
   } catch (error) {
     logger.error(error.message)

@@ -175,9 +175,9 @@ export default class ProductsDaoMongoDB {
   }
 
   // Método para eliminar todos los productos
-  async deleteAllProducts() {
+  async deleteAllProducts(email) {
     try {
-      const response = await productsModel.deleteMany({})
+      const response = email ? await productsModel.deleteMany( { owner: email } ) : await productsModel.deleteMany({})
       return response;
     } catch (error) {
       logger.error(error.message)

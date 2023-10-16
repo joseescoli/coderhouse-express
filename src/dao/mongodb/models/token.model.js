@@ -23,7 +23,7 @@ const tokenSchema = new Schema({
 */  expireAt: {
     type: Date,
     default: Date.now() + 60 * 60 * 1000,
-    index: { expires: '1h' }
+    index: { expires: config.RESET_TOKEN_EXPIRATION }
     // expires: config.RESET_TOKEN_EXPIRATION
   },
   status: {
