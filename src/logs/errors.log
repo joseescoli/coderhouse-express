@@ -2,3 +2,5 @@ error | 10-03-2023 07:43:17 | Nivel activo winston
 fatal | 10-03-2023 07:43:17 | Nivel activo winston
 error | 10-03-2023 17:58:56 | user.cart.toObject is not a function
 error | 10-03-2023 17:59:40 | user.cart.toObject is not a function
+error | 10-16-2023 19:41:13 | Login sessions require session support. Did you forget to use `express-session` middleware?
+error | 10-16-2023 19:41:56 | Login sessions require session support. Did you forget to use `express-session` middleware?
