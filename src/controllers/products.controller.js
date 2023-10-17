@@ -187,7 +187,7 @@ export const deleteByIdController = async (req, res) =>{
             else {
                 const prodDel = await deleteByIdService(pid);
                 if(prodDel) {
-                    let products = await getAllService()
+                    let products = await getAllProds()
                     products = products.map(item => item.toJSON())
                     // Envía el evento "products" a todos los clientes conectados con la lista actualizada de productos
                     io.emit('products', products);
@@ -207,7 +207,7 @@ export const deleteAllController = async (req, res) =>{
     try {
         const io = req.app.get("io");
         req.session.user.info.role === 'premium' && !(config.DEBUG) ? await deleteAllService( req.session.user.info.email ) : await deleteAllService();
-        let products = await getAllService()
+        let products = await getAllProds()
         products = products.map(item => item.toJSON())
         // Envía el evento "products" a todos los clientes conectados con la lista actualizada de productos
         io.emit('products', products);
