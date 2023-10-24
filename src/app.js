@@ -40,8 +40,18 @@ import { getAllProds as prodService } from "./services/products.services.js"
 // Llamadas de mensajes para invocar sus métodos
 import { getAllService as msgService, createService as msgCreate } from "./services/messages.services.js"
 
+// Incorporación de módulo de documentación Swagger
+import swaggerUI from 'swagger-ui-express'
+import swaggerJSDoc from 'swagger-jsdoc'
+
 // Definición de constante de servidor Express
 const app = express();
+
+// Incorporación de definición de configuración Swagger
+import { info } from './docs/info.js'
+const specs = swaggerJSDoc(info)
+app.use('/docs', swaggerUI.serve, swaggerUI.setup(specs));
+
 
 // Configuración de servidor Express y modo de operación
 app.use(express.json());

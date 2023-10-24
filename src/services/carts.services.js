@@ -108,7 +108,6 @@ export const purchaseCartService = async (ticket) => {
     const response = {}
     response.amount = await cartDao.purchaseCart(ticket.code)
     if ( response.amount ) {
-      // console.log(response);
       await userDao.newCart(ticket.purchaser)
       await createTicketService( { ...ticket, amount: response.amount })
       response.cart = ( await userDao.getByEmail(ticket.purchaser) ).cart

@@ -1,0 +1,48 @@
+components:
+  parameters:
+    schemas:
+      login: 
+        type: object
+        required:   
+          - email
+          - password
+        properties:  
+          email:
+            type: string
+            description: Email del usuario 
+          password:
+            type: string
+            description: Password del usuario
+        example:
+          email: usuario@correo.com
+          password: contraseña
+      register: 
+        type: object
+        required:   
+          - first_name
+          - last_name
+          - email
+          - age
+          - password
+        properties: 
+          first_name:
+            type: string
+            description: Nombre del usuario
+          last_name:
+            type: string
+            description: Apellido del usuario
+          age:
+            type: number
+            description: Edad del usuario
+          email:
+            type: string
+            description: Email del usuario 
+          password:
+            type: string
+            description: Password del usuario
+        example:
+          first_name: John
+          last_name: Doe
+          age: 50
+          email: usuario@correo.com
+          password: contraseña

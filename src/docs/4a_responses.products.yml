@@ -1,0 +1,366 @@
+components:
+  schema:
+    Products:
+      ok_getproducts:
+        type: object
+        properties:
+          status:
+            type: number
+            description: HTTP status code
+          message:
+            type: string
+            description: list of products (Paginate)
+          data:
+            type: object
+            description: Data from response
+            properties:
+              _id:
+                type: string
+                description: Mongo ID
+              title:
+                type: string
+                description: name of the product
+              description:
+                type: string
+                description: description of the product
+              code:
+                type: string
+                description: code of the product
+              price:
+                type: number
+                description: price of the product
+              status:
+                type: boolean
+                description: status of the product
+              stock:
+                type: number
+                description: stock of the product
+              category:
+                type: string
+                description: categoty of the product
+              thumbnails:
+                type: string
+                description: image of the product
+              owner:
+                type: string
+                description: ID number of the owner of the product or ADMIN as default
+        example:
+          status: 200
+          message: success
+          data:
+            {
+              _id: 64bf22c4ff8965169aaf06e0,
+              title: Ron Havana Club Añejo 7 años,
+              description: Ron cubano añejo con un equilibrio de sabores excepcional.,
+              code: HC011,
+              price: 1500,
+              status: true,
+              stock: 22,
+              category: Ron,
+              thumbnails: https://senseoftaste.com.au/cdn/shop/products/SOTE-Commresizing4_43_800x.png?v=1630558437,
+              owner: admin,
+            }
+      ok_getProductById:
+        type: object
+        properties:
+          status:
+            type: number
+            description: HTTP status code
+          message:
+            type: string
+            description: Product found Successfully
+          data:
+            type: object
+            description: Data from response
+            properties:
+              _id:
+                type: string
+                description: Mongo ID
+              title:
+                type: string
+                description: name of the product
+              description:
+                type: string
+                description: description of the product
+              code:
+                type: string
+                description: code of the product
+              price:
+                type: number
+                description: price of the product
+              status:
+                type: boolean
+                description: status of the product
+              stock:
+                type: number
+                description: stock of the product
+              category:
+                type: string
+                description: categoty of the product
+              thumbnails:
+                type: string
+                description: image of the product
+              owner:
+                type: string
+                description: ID number of the owner of the product or ADMIN as default
+        example:
+          status: 200
+          message: success
+          data:
+            {
+              _id: 64bf22c4ff8965169aaf06e0,
+              title: Ron Havana Club Añejo 7 años,
+              description: Ron cubano añejo con un equilibrio de sabores excepcional.,
+              code: HC011,
+              price: 1500,
+              status: true,
+              stock: 22,
+              category: Ron,
+              thumbnails: https://senseoftaste.com.au/cdn/shop/products/SOTE-Commresizing4_43_800x.png?v=1630558437,
+              owner: admin,
+            }
+      ok_addProduct:
+        type: object
+        properties:
+          status:
+            type: number
+            description: HTTP status code
+          message:
+            type: string
+            description: Product created successfully
+          data:
+            type: object
+            description: Data from response
+            properties:
+              _id:
+                type: string
+                description: Mongo ID
+              title:
+                type: string
+                description: name of the product
+              description:
+                type: string
+                description: description of the product
+              code:
+                type: string
+                description: code of the product
+              price:
+                type: number
+                description: price of the product
+              status:
+                type: boolean
+                description: status of the product
+              stock:
+                type: number
+                description: stock of the product
+              category:
+                type: string
+                description: categoty of the product
+              thumbnails:
+                type: string
+                description: image of the product
+              owner:
+                type: string
+                description: ID number of the owner of the product or ADMIN as default
+        example:
+          status: 200
+          message: success
+          data:
+            {
+              _id: 64bf22c4ff8965169aaf06e0,
+              title: Ron Havana Club Añejo 7 años,
+              description: Ron cubano añejo con un equilibrio de sabores excepcional.,
+              code: HC011,
+              price: 1500,
+              status: true,
+              stock: 22,
+              category: Ron,
+              thumbnails: https://senseoftaste.com.au/cdn/shop/products/SOTE-Commresizing4_43_800x.png?v=1630558437,
+              owner: admin,
+            }
+      ok_updateProduct:
+        type: object
+        properties:
+          status:
+            type: number
+            description: HTTP status code
+          message:
+            type: string
+            description: Product found Successfully
+          data:
+            type: object
+            description: Data from response
+            properties:
+              _id:
+                type: string
+                description: Mongo ID
+              title:
+                type: string
+                description: name of the product
+              description:
+                type: string
+                description: description of the product
+              code:
+                type: string
+                description: code of the product
+              price:
+                type: number
+                description: price of the product
+              status:
+                type: boolean
+                description: status of the product
+              stock:
+                type: number
+                description: stock of the product
+              category:
+                type: string
+                description: categoty of the product
+              thumbnails:
+                type: string
+                description: image of the product
+              owner:
+                type: string
+                description: ID number of the owner of the product or ADMIN as default
+        example:
+          status: 200
+          message: success
+          data:
+            {
+              _id: 64bf22c4ff8965169aaf06e0,
+              title: Ron Havana Club Añejo 7 años,
+              description: Ron cubano añejo con un equilibrio de sabores excepcional.,
+              code: HC011,
+              price: 1500,
+              status: true,
+              stock: 22,
+              category: Ron,
+              thumbnails: https://senseoftaste.com.au/cdn/shop/products/SOTE-Commresizing4_43_800x.png?v=1630558437,
+              owner: admin,
+            }
+      ok_deleteProduct:
+        type: object
+        properties:
+          status:
+            type: number
+            description: HTTP status code
+          message:
+            type: string
+            description: Product deleted successfully
+          data:
+            type: object
+            description: Data from response
+            properties:
+              _id:
+                type: string
+                description: Mongo ID
+              title:
+                type: string
+                description: name of the product
+              description:
+                type: string
+                description: description of the product
+              code:
+                type: string
+                description: code of the product
+              price:
+                type: number
+                description: price of the product
+              status:
+                type: boolean
+                description: status of the product
+              stock:
+                type: number
+                description: stock of the product
+              category:
+                type: string
+                description: categoty of the product
+              thumbnails:
+                type: string
+                description: image of the product
+              owner:
+                type: string
+                description: ID number of the owner of the product or ADMIN as default
+        example:
+          status: 200
+          message: success
+          data:
+            {
+              _id: 64bf22c4ff8965169aaf06e0,
+              title: Ron Havana Club Añejo 7 años,
+              description: Ron cubano añejo con un equilibrio de sabores excepcional.,
+              code: HC011,
+              price: 1500,
+              status: true,
+              stock: 22,
+              category: Ron,
+              thumbnails: https://senseoftaste.com.au/cdn/shop/products/SOTE-Commresizing4_43_800x.png?v=1630558437,
+              owner: admin,
+            }
+    Error:
+      notFound:
+        type: object
+        properties:
+          status:
+            type: number
+            description: HTTP status code
+          message:
+            type: string
+            description: Not foud message
+          data:
+            type: object
+            description: Data from response
+        example:
+          status: 404,
+          message: Not Found,
+          error: Product Not found
+
+      unauthorized:
+        type: object
+        properties:
+          status:
+            type: number
+            description: HTTP status code
+          message:
+            type: string
+            description: Unauthorized error message
+          data:
+            type: object
+            description: Data from response
+        example:
+          status: 401,
+          message: Unauthorized,
+          error: User is not authorized
+
+      forbidden:
+        type: object
+        properties:
+          status:
+            type: number
+            description: HTTP status code
+          message:
+            type: string
+            description: Fobidden error message
+          data:
+            type: object
+            description: Data from response
+        example:
+          status: 403,
+          message: Fobidden,
+          error: Fobidden
+
+      internalServerError:
+        type: object
+        properties:
+          status:
+            type: number
+            description: HTTP status code
+          message:
+            type: string
+            description: Server error message
+          data:
+            type: object
+            description: Data from response
+        example:
+          status: 500,
+          message: Interrnal Server Error,
+          error: Interrnal Server Error

@@ -1,0 +1,91 @@
+paths:
+  /login:
+    get:
+      tags:
+        - Users
+      summary: Formulario de logueo de usuario
+      description: Inicio de sesión de usuario por formulario.
+      responses:
+        '200':
+          description: Se deriva a inicio de sesión por método POST!
+    post:
+      tags:
+        - Users
+      summary: Inicio de sesión con credenciales
+      requestBody:  
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/parameters/schemas/login'
+        required: true
+      description: Se inicia sesión del usuario mediante ingreso de credenciales recibidas por body.
+      responses:
+        '200':
+          description: Ingreso de usuario correcto!
+  /register:
+    get:
+      tags:
+        - Users
+      summary: Formulario de registro de usuario
+      description: Inicio de sesión de usuario por formulario.
+      responses:
+        '200':
+          description: Se deriva a registro de usuario por método POST!
+    post:
+      tags:
+        - Users
+      summary: Registro de usuario con datos personales
+      requestBody:  
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/parameters/schemas/register'
+        required: true
+      description: Se registra el usuario mediante ingreso de datos personales recibidas por body.
+      responses:
+        '200':
+          description: Registro de usuario correcto!
+  /profile:
+    get:
+      tags:
+        - Users
+      security:
+        - local: []
+        - github: []
+      summary: Vista de datos de usuario
+      description: Vista Frontend de los datos de sesión del usuario autenticado.
+      responses:
+        '200':
+          description: Se renderiza la vista profile del usuario.
+  /logout:
+    get:
+      tags:
+        - Users
+      security:
+        - local: []
+        - github: []
+      summary: Cierre de sesión del usuario
+      description: Se cierra y destruye la sesión del usuario.
+      responses:
+        '200':
+          description: Se deriva al endpoint de login frontend para volver a iniciar sesión.
+  /github:
+    get:
+      tags:
+        - Users
+      summary: Inicio de sesión del usuario con Github
+      description: Se inicia sesión con la cuenta de Github del usuario.
+      responses:
+        '200':
+          description: Se deriva al endpoint OAUTH local para Github.
+  /oauth/github:
+    get:
+      tags:
+        - Users
+      security:
+        - github: []
+      summary: Endpoint OAUTH local de Github del usuario
+      description: Se autentica token de Github en endpoint local y se inicia sesión del usuario con correo de Github.
+      responses:
+        '200':
+          description: Se deriva al endpoint home principal de la web.

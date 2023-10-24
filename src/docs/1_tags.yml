@@ -1,0 +1,17 @@
+tags:
+  - name: Products
+    description: Operaciones relacionadas con productos
+    externalDocs:
+      description: GitHUB
+      url: https://github.com/joseescoli/coderhouse-express/blob/master/src/routes/products-router.js
+  - name: Carts
+    description: Operaciones relacionadas con carritos
+    externalDocs:
+      description: GitHUB
+      url: https://github.com/joseescoli/coderhouse-express/blob/master/src/routes/carts-router.js
+  - name: Users
+    description: Operaciones de logueo de los usuarios
+    externalDocs:
+      description: GitHUB
+      url: https://github.com/joseescoli/coderhouse-express/blob/master/src/routes/user.router.js
+      # url: https://github.com/joseescoli/coderhouse-express/blob/master/src/routes/login.router.js

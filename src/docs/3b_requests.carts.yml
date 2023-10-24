@@ -1,0 +1,81 @@
+components:
+  parameters:
+    schemas:
+      CartProduct:
+        type: object
+        properties:
+          prodId:
+            type: string
+            required: true
+          quantity:
+            type: number
+            required: true
+        example:
+              prodId: 64bee01d81d92884ef61c60d,
+              quantity: 26
+      Cart:
+        type: object
+        properties:
+          id:
+            type: string
+            description: ID del carrito
+          products:
+            type: array
+            items:
+              $ref: "#/definitions/CartProduct"
+        example:
+          id: 6508f0baca073f69f21902bd
+          products: [
+            {
+              prodId: 64bee01d81d92884ef61c60d,
+              quantity: 26
+            },
+            {
+              prodId: 64bee01d81d92884ef61c60c,
+              quantity: 5
+            },
+            {
+              prodId: 64bee01d81d92884ef61c60e,
+              quantity: 2
+            },
+            {
+              prodId: 652d52d6a0e1d8ec9de6b7d6,
+              quantity: 1
+            },
+          ]
+      getCart:
+        type: object
+        properties:
+          id:
+            type: string
+            description: ID del carrito
+        example:
+          id: 6508f0baca073f69f21902bd
+      cartAndProductId:
+        type: object
+        properties:
+          cid:
+            type: string
+            description: ID del carrito
+          pid:
+            type: string
+            description: ID del producto
+        example:
+          cid: 6508f0baca073f69f21902bd
+          pid: 64bee01d81d92884ef61c60d
+      updateQty:
+        type: object
+        properties:
+          cid:
+            type: string
+            description: ID del carrito
+          pid:
+            type: string
+            description: ID del producto
+          quantity:
+            type: number
+            description: Cantidad del producto a agregar
+        example:
+          cid: 6508f0baca073f69f21902bd
+          pid: 64bee01d81d92884ef61c60d
+          quantity: 2

@@ -1,0 +1,106 @@
+components:
+  parameters:
+    schemas:
+      Product:
+        type: object
+        properties:
+          title:
+            type: string
+            required: false
+          description:
+            type: string
+            required: false
+          code:
+            type: string
+            required: false
+            unique: true
+          price:
+            type: number
+            required: false
+          stock:
+            type: number
+            required: false
+          category:
+            type: string
+            required: false
+            enum:
+              - Cat1
+              - Cat2
+              - Cat3
+          status:
+            type: boolean
+            default: true
+            required: false
+          thumbnails:
+            type: array
+            default: []
+            items:
+              type: string
+          owner:
+            type: string
+            required: false
+        example:
+          title: Silla pino blanca
+          description: Silla de madera de pino blanca
+          code: PT001
+          price: 5000
+          stock: 1
+          category: Cat1
+          status: true
+          thumbnails: [./img1.jpg, ./img2.jpg]
+          owner: p@p.com
+        required: true
+      Product-New:
+        type: object
+        properties:
+          title:
+            type: string
+            required: true
+          description:
+            type: string
+            required: true
+          code:
+            type: string
+            required: true
+            unique: true
+          price:
+            type: number
+            required: true
+          stock:
+            type: number
+            required: true
+          category:
+            type: string
+            required: true
+            enum:
+              - Cat1
+              - Cat2
+              - Cat3
+          status:
+            type: boolean
+            default: true
+            required: true
+          thumbnails:
+            type: array
+            default: []
+            items:
+              type: string
+          owner:
+            type: string
+            default: admin
+        example:
+          title: Silla pino blanca
+          description: Silla de madera de pino blanca
+          code: PT001
+          price: 5000
+          stock: 1
+          category: Cat1
+          status: true
+          thumbnails: [./img1.jpg, ./img2.jpg]
+          owner: p@p.com
+        required: true
+      Product-ID:
+        type: string
+        required: true
+        description: ID del producto en la base de datos.
+        example:  64c01e2f4f89b7371af4cd31

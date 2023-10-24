@@ -1,7 +1,7 @@
 import { logger } from '../utils/logger.js';
 import { createTransport } from 'nodemailer';
-// Correo modelo en archivo ./email/email.template.js sin utilizar
-// import templateHtml from './email/email.template.js';
+// Incorporación de variable "templateHtml" si se utilizara el archivo "/email/email.template.js"
+// import templateHtml from './email/email.template.js';    // Dicho modelo de correo está sin utilizar
 import config from '../config.js';
 
 const transporter = createTransport({
@@ -19,7 +19,7 @@ const mailOptions = (email) => {
     to: email.destination,
     subject: email.service === 'reg' ? 'You have been registered to Express Server ECOMMERCE' : 'Ecommerce | Password reset request',
     html: email.service === 'reg' ?
-    `<h1>Bienvenido ${email.name} a Coderhouse</h1><br><p>This email is to confirm your registration to our site Ecommerce http://localhost:8080/</p><p>There, you will be able to check our latest products every day.</p><br>`
+    `<h1>Welcome ${email.name} to Coderhouse</h1><br><p>This email is to confirm your registration to our site Ecommerce http://localhost:8080/</p><p>There, you will be able to check our latest products every day.</p><br>`
     :
     `<h1>Dear ${email.name},</h1><br><br>
     <p>This email from the Ecommerce webpage http://localhost:8080/</p>
@@ -32,10 +32,10 @@ const mailOptions = (email) => {
     <br><br>
     `
     
-    // Parámetros sin utilizar
-    // text: 'Texto plano del cuerpo del correo',
-    // html: templateHtml [variable importada con html pre generado en otro archivo],
     /*
+    // Parámetros sin utilizar
+    text: 'Texto plano del cuerpo del correo',
+    html: templateHtml [variable importada con html pre generado en otro archivo. En caso de utilizarse se debe importar arriba],
     // Definición de adjunto en el correo
     attachments: [
         {
@@ -49,7 +49,6 @@ const mailOptions = (email) => {
 
 }
 
-// import { mailOptions, transporter } from "../services/email.service.js";
 export const sendMailEthereal = async (email) => {
     try {
         const response = await transporter.sendMail(mailOptions(email));

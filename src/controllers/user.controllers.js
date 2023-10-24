@@ -12,7 +12,7 @@ export const registerUser = async(req, res) => {
         req.session.path = req.url
         detectBrowser(req.get('User-Agent')) ? res.redirect('/login') : httpResponse.Ok(res, { msg: "Register ok", session: req.session, })
     } catch (error) {
-      req.logger.error(error.message)
+      return httpResponse.ServerError(res, error.message)
     }
 };
 
@@ -43,7 +43,7 @@ export const loginUser = async(req, res) => {
             detectBrowser(req.get('User-Agent')) ? res.redirect('/error-login') : httpResponse.NotFound(res, "User or password incorrect!")
 
     } catch (error) {
-      req.logger.error(error.message)
+      return httpResponse.ServerError(res, error.message)
     }
 };
 
@@ -70,7 +70,7 @@ export const githubLogin = async (req, res, next) => {
         detectBrowser(req.get('User-Agent')) ? res.redirect('/error-login') : httpResponse.NotFound(res, "User token error or Github wrong credentials!")
 
       } catch (error) {
-        req.logger.error(error.message)
+        return httpResponse.ServerError(res, error.message)
         // next(error.message);
     }
   };
@@ -80,7 +80,7 @@ export const passwordResetForm = async(req, res) => {
   try {
     detectBrowser(req.get('User-Agent')) ? res.render('passReset') : httpResponse.NotFound(res, 'Password reset form. Frontend email assignment and confirmation button. No available options from API calls!')
   } catch (error) {
-    req.logger.error(error.message)
+    return httpResponse.ServerError(res, error.message)
   }
 };
 
@@ -103,7 +103,7 @@ export const passwordReset = async(req, res) => {
       else
         return httpResponse.NotFound(res, 'User does not exists!')
   } catch (error) {
-    req.logger.error(error.message)
+    return httpResponse.ServerError(res, error.message)
   }
 };
 
@@ -125,7 +125,7 @@ export const passwordForm = async(req, res) => {
           } else return httpResponse.WrongInfo(res, 'User has Github passport. You have to reset your password at "https://github.com/setting/security" if you want to change your password. Otherwise, if you forgot your Github password you need to change it at "https://github.com/password_reset".')
         } else return httpResponse.Unauthorized(res, 'Access not allowed without a correct token!')
     } catch (error) {
-      req.logger.error(error.message)
+      return httpResponse.ServerError(res, error.message)
     }
 };
 
@@ -152,6 +152,6 @@ export const password = async(req, res) => {
       } else return httpResponse.NotFound(res, 'Incorrect user information!')
     } else return httpResponse.WrongInfo(res, 'Token not provided or incorrect!')
     } catch (error) {
-      req.logger.error(error.message)
+      return httpResponse.ServerError(res, error.message)
     }
 };

@@ -1,0 +1,108 @@
+# Respuestas estándar
+components:
+  responses:
+    OK:
+      description: ¡Operación correcta!
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OK'
+    Purchase:
+      description: ¡Compra finalizada!
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Purchase'
+    WrongInfo:
+      description: ¡Información proporcionada incorrecta!
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Default'
+    NotFound:
+      description: ¡No se encontró el recurso especificado!
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Default'
+    Unauthorized:
+      description: ¡No posee autorización para el recurso especificado!
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Default'
+    Forbidden:
+      description: ¡El acceso al recurso especificado no está permitido!
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Default'
+    ServerError:
+      description: ¡Error interno del servidor!
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Default'
+  schemas:
+    # Esquema de respuesta por defecto
+    Default:
+      type: object
+      properties:
+        status:
+          type: number
+        message:
+          type: string
+        error:
+          type: string
+      required:
+        - status
+        - message
+        - error
+      example:
+          status: 400
+          message: Error relacionado a código 400
+          error: Mensaje con detalles de código 400
+    # Esquema de respuesta OK
+    OK:
+      type: object
+      properties:
+        status:
+          type: number
+        message:
+          type: string
+        data:
+          type: object
+      required:
+        - status
+        - message
+        - data
+      example:
+          status: 200
+          message: success
+          data:
+            {
+              _id: 64bf22c4ff8965169aaf06e0,
+              title: Producto XX,
+              description: Descripción del producto,
+              code: P0000,
+              price: 500,
+              status: true,
+              stock: 22,
+              category: Cat1,
+              thumbnails: https://path.com.au/a/imagen.jpg,
+              owner: admin,
+            }
+    # Esquema de respuesta de Compra
+    Purchase:
+      type: object
+      properties:
+        status:
+          type: number
+        message:
+          type: string
+        cart:
+          type: string
+      required:
+        - status
+        - message
+        - cart

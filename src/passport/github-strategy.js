@@ -18,10 +18,8 @@ const strategyOptions = {
 };
 
 const registerOrLogin = async (accessToken, refreshToken, profile, done) => {
-    // console.log('PROFILE --> \n', profile);
     const { value: email } = profile.emails?.[0] ?? [{ value: null }];
     const user = await userDao.getByEmail( email );
-    // console.log("Chequeo usuario: " + user);
     if ( user ) return done( null, user );
     else {
         const cart = await cartDao.createCart()
@@ -39,8 +37,7 @@ const registerOrLogin = async (accessToken, refreshToken, profile, done) => {
             profileImg: profile._json.avatar_url,
             cart: cart._id
         });
-        // console.log("\n\nUsuario registrado: " + newUser);
-        await sendMailEthereal( { name: user.first_name, destination: email, service: 'reg' } )
+        await sendMailEthereal( { name: newUser.first_name, destination: email, service: 'reg' } )
         return done(null, newUser);
     }
 }

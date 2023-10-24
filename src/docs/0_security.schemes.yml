@@ -1,0 +1,15 @@
+components:
+  securitySchemes:
+    github:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: http://localhost:8080/github
+          scopes:
+            read:email: Read your user email
+    local:
+      type: http
+      scheme: basic
+security:
+  - local: []
+  - github: []

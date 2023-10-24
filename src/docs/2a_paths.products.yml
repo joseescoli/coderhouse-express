@@ -1,0 +1,126 @@
+paths:
+  /api/products:
+    get:
+      tags:
+      - Products
+      security:
+        - local: []
+        - github: []
+      summary: Listado de todos los productos
+      description: Se visualiza listado de productos para aquellos usuarios autenticados
+      responses:
+        '200':
+          $ref: '#/components/responses/OK'
+          # description: Se obtiene la lista de productos paginada.
+          # content:
+          #   application/json:
+          #     schema:
+          #       $ref: "#/components/schema/Products/ok_getproducts"
+    post:
+      tags:
+      - Products
+      security:
+        - local: []
+        - github: []
+      summary: Crea un nuevo producto
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/parameters/schemas/Product-New"
+        required: true
+      description: El producto es creado sólo para usuarios con rol 'admin' o 'premium'.
+      responses:
+        '200':
+          description: Creación correcta.
+    delete:
+      tags:
+      - Products
+      security:
+        - local: []
+        - github: []
+      summary: Elimina todos los productos
+      description: Los productos son eliminados sólo para usuarios con rol 'admin' o 'premium'. El tipo de usuario admin puede borrar todos los productos. En cambio, el usuario premium sólo puede borrar todos los productos bajo su propiedad en el campo "owner".
+      responses:
+        '200':
+          description: Eliminación correcta.
+  /api/products/{pid}:
+    get:
+      tags:
+      - Products
+      security:
+        - local: []
+        - github: []
+      summary: Obtener detalles de producto por ID
+      description: Se obtienen detalles del producto pasado por parámetro URL.
+      parameters:
+        - in: path
+          name: pid
+          required: true
+          schema:
+            type: string
+          description: ID del producto en la base de datos.
+          example: 64c01e2f4f89b7371af4cd31
+      responses:
+        '200':
+          $ref: '#/components/responses/OK'
+          # description: Resultado en formato JSON del producto consultado.
+    put:
+      tags:
+      - Products
+      security:
+        - local: []
+        - github: []
+      summary: Actualiza datos del producto
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/parameters/schemas/Product"
+        required: true
+      description: Actualiza el producto indicado por parámetro URL con datos del cuerpo del request (Sólo roles admin o roles premium que sean owner del producto)
+      parameters:
+        - in: path
+          name: pid
+          required: true
+          schema:
+            type: string
+          description: ID del producto a actualizar.
+          example: 64c01e2f4f89b7371af4cd31
+      responses:
+        '200':
+          description: Se actualiza el producto.
+    delete:
+      tags:
+      - Products
+      security:
+        - local: []
+        - github: []
+      summary: Delete a product
+      description: Delete a product by its ID (Only accessible to users with 'user' or 'premium' roles).
+      parameters:
+        - in: path
+          name: pid
+          required: true
+          schema:
+            type: string
+          description: Product ID to delete.
+      responses:
+        '200':
+          description: The product has been deleted.
+  /products/mockingproducts:
+    get:
+      tags:
+        - Products
+      security:
+          - local: []
+          - github: []
+      summary: Muestra 100 productos de prueba
+      description: Se muestra lista en formato JSON con 100 productos aleatorios. Los productos se crean en el momento y no son almacenados en la base de datos.
+      responses:
+        '200':
+          description: Listado de productos.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schema/Products/mockingproducts"
