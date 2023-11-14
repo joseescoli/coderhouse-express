@@ -23,7 +23,7 @@ export const loginUser = async(req, res) => {
         // Constante "user" que recibe toda la información de la base de datos
         const user = await userDao.getById(req.session.passport.user);
 
-        if(user) {
+        if(user && !user.githubLogin) {
             req.session.user = {
                 loggedIn: true,
                 sessionCount: 1,

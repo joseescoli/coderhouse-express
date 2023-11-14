@@ -6,7 +6,7 @@ const httpResponse = new HttpResponse()
 const access = ( ...roles ) => {
     return ( req, res, next ) => {
         const role = req.session.user?.info.role.toLowerCase()
-        if ( config.DEBUG || Number(config.DEBUG) === 1 ) {
+        if ( config.DEBUG || Number(config.DEBUG) === 1 || config.TESTING ) {
             req.logger.debug(`Endpoint ${req.url} access granted!`);
             next();
         }

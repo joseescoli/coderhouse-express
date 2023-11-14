@@ -4,6 +4,11 @@ import { fakerES as faker } from "@faker-js/faker";
 // faker.locale = "es";
 import { randomBytes } from 'crypto';
 
+import config from '../config.js';
+import { connectionString } from '../dao/mongodb/dbconnection.js';
+
+import { getAllProds, createService } from '../services/products.services.js';
+
 export const resetToken = async () => randomBytes(32).toString('hex');
 /**
  * Función para la encripción de la contraseña con el módulo "bcrypt" usando el método hashSync. 
@@ -22,19 +27,21 @@ export const createHash = password => hashSync(password, genSaltSync(10));
 export const isValidPassword = (password, dbpass) => compareSync(password, dbpass);
 
 export const detectBrowser = (agent) => {
-    if(agent.match(/chrome|chromium|crios/i)){
-        return "chrome";
-    }else if(agent.match(/firefox|fxios/i)){
-        return "firefox";
-    }  else if(agent.match(/safari/i)){
-        return "safari";
-    }else if(agent.match(/opr\//i)){
-        return "opera";
-    } else if(agent.match(/edg/i)){
-        return "edge";
-    }else{
-        return false;
-    }
+    if ( !config.TESTING ) {
+        if(agent.match(/chrome|chromium|crios/i)){
+            return "chrome";
+        }else if(agent.match(/firefox|fxios/i)){
+            return "firefox";
+        }  else if(agent.match(/safari/i)){
+            return "safari";
+        }else if(agent.match(/opr\//i)){
+            return "opera";
+        } else if(agent.match(/edg/i)){
+            return "edge";
+        }else{
+            return false;
+        }
+    } else return false;
 }
 
 // Fuente de https://gist.github.com/solenoid/1372386
@@ -46,7 +53,6 @@ const mongoObjectId = () => {
 };
 
 const mockProduct = () => ({
-    _id: mongoObjectId(),
     title: faker.commerce.productName(),
     description: faker.commerce.productDescription(),
     // price: faker.commerce.price(),
@@ -57,6 +63,23 @@ const mockProduct = () => ({
     status: faker.datatype.boolean(),
     thumbnails: Array.from({ length: 3 }, () => faker.image.url()),
   });
+
+const mockProductMongoID = () => ({
+    _id: mongoObjectId(),
+    ...mockProduct()
+  });
   
-  export const createProductsMocking = (count = 100) =>
+  export const createProductsMocking = (count = 1) =>
+    Array.from({ length: count }, mockProductMongoID);
+
+  export const createProductsMockNoID = (count = 1) =>
     Array.from({ length: count }, mockProduct);
+
+  export const createDemoProductsTestingDB = async (count = 1) => {
+    const prods = Array.from({ length: count }, mockProduct);
+    if ( config.TESTING )
+        prods.forEach( async item => await createService(item) )
+    const products = await getAllProds()
+    const obj = products.map( item => item.toJSON() )
+    return obj
+  }

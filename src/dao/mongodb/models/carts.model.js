@@ -15,7 +15,7 @@ const cartProdRelSchema = new Schema({
 })
 
 const cartSchema = new Schema({
-    products: { type: [cartProdRelSchema], required: true, default: [] }
+    products: { type: [cartProdRelSchema], default: [] }
 });
 
 export const cartsModel = model('carts', cartSchema);

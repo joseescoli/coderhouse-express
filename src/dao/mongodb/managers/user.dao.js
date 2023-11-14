@@ -6,6 +6,19 @@ const cartDao = new CartsDaoMongoDB()
 
 export default class UserDao {
 
+    async getall() {
+        try {
+          const users = await UserModel.find({}, {_id: 1, email: 1, first_name: 1, last_name: 1}).lean()
+
+          if( !users )
+            return false
+          else
+            return users
+        } catch (error) {
+          logger.error(error.message)
+        }
+    };
+
     async registerUser(user) {
         try {
             const { email, password } = user;            

@@ -140,3 +140,6 @@ socketServer.on('connection', async (socket) => {
     })
 
 })
+
+// Se exporta constante para el uso de pruebas con jest
+export default app;

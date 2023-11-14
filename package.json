@@ -10,7 +10,20 @@
     "start-atlas": "node . atlas",
     "dev": "nodemon .",
     "dev-local": "nodemon . local",
-    "dev-atlas": "nodemon . atlas"
+    "dev-atlas": "nodemon . atlas",
+    "watch-local": "node --watch . local",
+    "watch-atlas": "node --watch . atlas",
+    "test-mocha:unit:carts": "mocha ./src/tests/unit/carts_dao.test.js",
+    "test-mocha:unit:products": "mocha ./src/tests/unit/products_dao.test.js",
+    "test-mocha:unit:users": "mocha ./src/tests/unit/user_dao.test.js",
+    "test-mocha:unit:all": "mocha ./src/tests/unit --recursive",
+    "test-node:unit:carts": "node ./src/tests/unit/carts_dao.test.js",
+    "test-node:unit:products": "node ./src/tests/unit/products_dao.test.js",
+    "test-node:unit:users": "node ./src/tests/unit/user_dao.test.js",
+    "test-jest:full:carts": "set NODE_OPTIONS=--experimental-vm-modules && npx jest ./src/tests/full/carts_endpoints.test.js",
+    "test-jest:full:products": "set NODE_OPTIONS=--experimental-vm-modules && npx jest ./src/tests/full/products_endpoints.test.js",
+    "test-jest:full:users": "set NODE_OPTIONS=--experimental-vm-modules && npx jest ./src/tests/full/users_endpoints.test.js",
+    "test-node:full:carts": "node ./src/tests/full/carts_endpoints.test.js"
   },
   "repository": {
     "type": "git",
@@ -28,8 +41,12 @@
   },
   "homepage": "https://github.com/joseescoli/coderhouse-express#readme",
   "devDependencies": {
+    "chai": "^4.3.10",
     "express": "^4.18.2",
-    "nodemon": "^2.0.22"
+    "jest": "^29.7.0",
+    "mocha": "^10.2.0",
+    "nodemon": "^2.0.22",
+    "supertest": "^6.3.3"
   },
   "dependencies": {
     "@faker-js/faker": "^8.1.0",

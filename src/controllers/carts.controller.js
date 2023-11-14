@@ -51,7 +51,8 @@ export const createController = async (req, res) => {
     try {
             const cart = await createService()
             if(cart)
-                return httpResponse.Ok(res, 'Cart created!')
+                return httpResponse.Ok(res, cart)
+                // return httpResponse.Ok(res, 'Cart created!')
             else {
                 return httpResponse.WrongInfo(res, 'Invalid cart!')
             }

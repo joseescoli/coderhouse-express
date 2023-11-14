@@ -3,6 +3,9 @@
 // dotenv.config({ path: __dirname + '/.env' })
 import "dotenv/config"
 
+const testing = (process.argv[1]?.toLowerCase().includes('jest.js') || process.argv[2]?.toLowerCase().includes('test.js') || process.argv[3]?.toLowerCase().includes('test.js'))
+    testing && console.log('TESTING mode')
+
 if ( !( process.env.MONGO_ATLAS_RW_URL || process.env.MONGO_LOCAL_URL ) && ( process.env.GITHUB_CLIENTID && process.env.GITHUB_CLIENTSECRET && process.env.MONGO_STORE_SESSION_URL_SECRET && process.env.MONGO_STORE_SESSION_SECRET ) )
     console.log("Environment variables in file .env not set. Please assign the ones like in the .env_example file for reference!");
 
@@ -15,6 +18,8 @@ export default {
     MONGO_ATLAS_RW_URL: process.env.MONGO_ATLAS_RW_URL,
     MONGO_ATLAS_R_URL: process.env.MONGO_ATLAS_R_URL,
     MONGO_LOCAL_URL: process.env.MONGO_LOCAL_URL,
+    MONGO_ATLAS_TEST_RW_URL: process.env.MONGO_ATLAS_TEST_RW_URL,
+    MONGO_LOCAL_TEST_URL: process.env.MONGO_LOCAL_TEST_URL,
     GITHUB_CLIENTID: process.env.GITHUB_CLIENTID,
     GITHUB_CLIENTSECRET: process.env.GITHUB_CLIENTSECRET,
     MONGO_STORE_SESSION_URL_SECRET: process.env.MONGO_STORE_SESSION_URL_SECRET,
@@ -25,6 +30,7 @@ export default {
     FAKEMAIL: process.env.FAKEMAIL,
     PASSWORD: process.env.PASSWORD,
     NAME: process.env.NAME,
+    TESTING: testing,
     DEBUG: process.env.DEBUG?.toLowerCase(),
     // En caso de no definirse establecerse por defecto en 1 hora (3600 segundos)
     RESET_TOKEN_EXPIRATION: process.env.RESET_TOKEN_EXPIRATION || 3600

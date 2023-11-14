@@ -9,6 +9,7 @@ const router = Router();
 router.post('/register', passport.authenticate('register'), registerUser);
 
 // Registro passport local con params
+/*
 router.post('/register', passport.authenticate('register',
     {
     successRedirect: "/login",
@@ -16,6 +17,7 @@ router.post('/register', passport.authenticate('register',
     passReqToCallback: true,
     })
 );
+*/
 
 // Login passport local
 router.post('/login', passport.authenticate('login'), loginUser);

@@ -168,10 +168,10 @@ export default class CartsDaoMongoDB {
             }            
           }
         } else {
-          // Al no encontrarse el producto en el carrito y se incorpora el ID y la cantidad
+          // Al no encontrarse el producto en el carrito se incorpora el ID y la cantidad
           // Todo lo anterior dicho sólo si el producto posee stock
-            if (product.stock > 0 && product.status) {
-              cart.products.push({ product, quantity: cant })
+            if (product.stock > 0 && product.status && product.stock >= cant ) {
+              cart.products.push({ product: pid, quantity: cant })
               await cart.save()
               return 1
             }
