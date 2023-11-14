@@ -2,7 +2,7 @@
   "name": "coderhouse-backend-express",
   "version": "1.0.0",
   "description": "Proyecto Express Backend",
-  "main": "src/app.js",
+  "main": "src/server.js",
   "type": "module",
   "scripts": {
     "start": "node .",

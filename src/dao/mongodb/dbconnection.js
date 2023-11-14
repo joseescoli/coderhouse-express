@@ -7,7 +7,7 @@ const testing = config.TESTING
 export const connectionString = 
 testing ? config.MONGO_ATLAS_TEST_RW_URL :
 // testing ? config.MONGO_LOCAL_TEST_URL :
-process.argv[2]?.toLowerCase() === 'atlas' ? config.MONGO_ATLAS_RW_URL : config.MONGO_LOCAL_URL
+!process.argv[2] || process.argv[2]?.toLowerCase() === 'atlas' ? config.MONGO_ATLAS_RW_URL : config.MONGO_LOCAL_URL
 
 // export const connectionString = config.MONGO_LOCAL_URL
 // export const connectionString = config.MONGO_ATLAS_R_URL
