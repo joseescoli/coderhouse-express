@@ -1,4 +1,16 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, now } from "mongoose";
+
+const documentSchema = new Schema({
+    _id: false,
+    name: {
+        type: String,
+        required: true
+    },
+    reference: {
+        type: String,
+        required: true
+    }
+})
 
 const userSchema = new Schema({
     first_name: {
@@ -38,6 +50,14 @@ const userSchema = new Schema({
     profileImg: {
         type: String,
         default: null
+    },
+    last_connection: {
+        type: Date,
+        default: Date.now
+    },
+    documents: {
+        type: [documentSchema],
+        default: []
     }
 });
 

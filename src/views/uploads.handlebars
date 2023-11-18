@@ -1,0 +1,37 @@
+<h1>Upload files</h1>
+<h2>Documentation required to be able to change users to premium role:</h2>
+<ul>
+    <li>Identification (Identificación)</li>
+    <li>Address certificate (Comprobante de domicilio)</li>
+    <li>Account status (Comprobante de estado de cuenta)</li>
+</ul>
+<p><strong>User to modify:  </strong>{{ID}}</p>
+<form action="/api/users/{{ID}}/documents" enctype="multipart/form-data" method='post'>
+    <div class="form">Select the file type to upload:<br><br>
+    {{#if status.id }}
+        <input type="radio" name="doctype" disabled>Identification certificate document <strong>[UPLOADED!]</strong><br>
+    {{else}}
+        <input type="radio" name="doctype" value="ID">Identification certificate document<br>
+    {{/if}}
+    {{#if status.address }}
+        <input type="radio" name="doctype" disabled>Address certificate document <strong>[UPLOADED!]</strong><br>
+    {{else}}
+        <input type="radio" name="doctype" value="Address">Address certificate document<br>
+    {{/if}}
+    {{#if status.accounting }}
+        <input type="radio" name="doctype" disabled>Accounting balance certificate <strong>[UPLOADED!]</strong><br>
+    {{else}}
+        <input type="radio" name="doctype" value="Accounting">Accounting balance certificate<br>
+    {{/if}}
+    <input type="radio" name="doctype" value="Profile">Profile picture<br>
+    <input type="radio" name="doctype" value="Product">Product image<br>
+    <br><br>
+    <input type="file" name="files">
+    </div>
+    <br>
+    <input type='submit' value='SEND' />
+</form>
+<br>
+<br>
+<br>
+<button onclick="location.href='/'">Home</button>

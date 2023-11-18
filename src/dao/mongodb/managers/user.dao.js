@@ -121,4 +121,22 @@ export default class UserDao {
         }
       }
 
+      async checkDocStatus(id) {
+        try {
+          // https://stackoverflow.com/questions/9939760/how-do-i-convert-an-integer-to-binary-in-javascript
+          let status = {}
+          const user = await this.getById(id)
+          if( user ) {
+            status.id = user.documents.some( doc => doc.name === 'ID' )
+            status.address = user.documents.some( doc => doc.name === 'Address' )
+            status.accounting = user.documents.some( doc => doc.name === 'Accounting' )
+            return status
+          }
+          else return false
+        } catch (error) {
+          logger.error(error.message)
+          throw new Error(error)
+        }
+      }
+
 }

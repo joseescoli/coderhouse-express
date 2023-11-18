@@ -7,9 +7,6 @@ import config from "../config.js";
 // Función de detección de usuario interactivo o API (Navegador, API o consulta de endpoint)
 import { detectBrowser } from "../utils/utils.js";
 
-import UserDao from "../dao/mongodb/managers/user.dao.js";
-const userDao = new UserDao()
-
 import { HttpResponse } from "../utils/http.responses.js";
 const httpResponse = new HttpResponse()
 import errorsConstants from "../utils/errors/errors.constants.js";
@@ -94,24 +91,6 @@ export const listAllApisView = async (req, res) => {
         res.status(200).render('apis')
     } catch (error) {
         res.status(400).json({ message: error.message });
-        req.logger.error(error.message)
-    }
-};
-
-export const changeRolePremium = async (req, res) => {
-    try {
-        const ID = req.params?.uid ? String(req.params.uid) : false
-        if ( ID ) {
-            const response = await userDao.changeRoleById(ID)
-            if ( response ) {
-                req.logger.info(`Role for user ${ID} changed to ${response}!`)
-                return httpResponse.Ok(res, `Role for user ${ID} changed to ${response}!`)
-            }
-            else
-                return httpResponse.NotFound(res, errorsConstants.USER_NOT_FOUND)
-        } else return httpResponse.WrongInfo(res, errorsConstants.ID_WRONG)
-    } catch (error) {
-        res.status(500).json({ message: error.message });
         req.logger.error(error.message)
     }
 };

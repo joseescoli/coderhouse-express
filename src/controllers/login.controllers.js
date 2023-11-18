@@ -1,3 +1,5 @@
+import UserDao from "../dao/mongodb/managers/user.dao.js";
+const userDao = new UserDao()
 import { detectBrowser } from "../utils/utils.js";
 
 export const register = (req, res) => {
@@ -35,9 +37,12 @@ export const profile = (req, res) => {
         res.redirect('/login')
 };
 
-export const logout = (req, res) => {
+export const logout = async (req, res) => {
     if ( req.session?.user ) {
         req.logger.debug(`User ${req.session.user.info.email} logged out!`);
+        const user = await userDao.getById(req.session.passport.user)
+        user.last_connection = Date.now()
+        user.save()
         delete req.session.user
         req.session.destroy( (err) => {
             if( !err ) {
@@ -46,9 +51,11 @@ export const logout = (req, res) => {
             else
                 res.json({ msg: err });
         })
+        /*
         req.logout( error => {
-            error ? req.logger.error(error.message) : res.redirect('/login')
+            error ? req.logger.error(error.message) : detectBrowser(req.get('User-Agent')) ? res.redirect('/login') : res.json({ msg: 'Logout ok!' });
         })
+        */
     }
     else
         detectBrowser(req.get('User-Agent')) ? res.redirect('/login') : res.json({ msg: 'User not logged in!' })

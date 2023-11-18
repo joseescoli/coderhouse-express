@@ -4,8 +4,10 @@ import { createTokenService, disableTokenService, getTokenByUserService } from "
 import { detectBrowser } from "../utils/utils.js";
 import { HttpResponse } from "../utils/http.responses.js"
 const httpResponse = new HttpResponse()
+import errorsConstants from "../utils/errors/errors.constants.js";
 import { isValidPassword as isValidToken, createHash, resetToken } from "../utils/utils.js";
 import { sendMailEthereal } from "../services/email.services.js";
+import { __dirname } from "../path.js";
 
 export const registerUser = async(req, res) => {
   try {
@@ -24,23 +26,25 @@ export const loginUser = async(req, res) => {
         const user = await userDao.getById(req.session.passport.user);
 
         if(user && !user.githubLogin) {
-            req.session.user = {
-                loggedIn: true,
-                sessionCount: 1,
-                info: {
-                    first_name: user.first_name,
-                    last_name: user.last_name,
-                    email: user.email,
-                    age: user.age,
-                    role: user.role,
-                    github: user.githubLogin,
-                    image: user.profileImg,
-                    cart: user.cart
-                }
-            }
-            detectBrowser(req.get('User-Agent')) ? res.redirect('/') : httpResponse.Ok(res, "Logged on!")
-        } else
-            detectBrowser(req.get('User-Agent')) ? res.redirect('/error-login') : httpResponse.NotFound(res, "User or password incorrect!")
+          user.last_connection = Date.now()
+          user.save()
+          req.session.user = {
+              loggedIn: true,
+              sessionCount: 1,
+              info: {
+                  first_name: user.first_name,
+                  last_name: user.last_name,
+                  email: user.email,
+                  age: user.age,
+                  role: user.role,
+                  github: user.githubLogin,
+                  image: user.profileImg,
+                  cart: user.cart
+              }
+          }
+          detectBrowser(req.get('User-Agent')) ? res.redirect('/') : httpResponse.Ok(res, "Logged on!")
+      } else
+          detectBrowser(req.get('User-Agent')) ? res.redirect('/error-login') : httpResponse.NotFound(res, "User or password incorrect!")
 
     } catch (error) {
       return httpResponse.ServerError(res, error.message)
@@ -50,6 +54,9 @@ export const loginUser = async(req, res) => {
 export const githubLogin = async (req, res, next) => {
     try {
       if ( req.user && req.session?.passport?.user ) {
+        const user = await userDao.getById(req.session.passport.user)
+        user.last_connection = Date.now()
+        user.save()
         req.session.user = {
           loggedIn: true,
           sessionCount: 1,
@@ -154,4 +161,67 @@ export const password = async(req, res) => {
     } catch (error) {
       return httpResponse.ServerError(res, error.message)
     }
+};
+
+export const changeRolePremium = async (req, res) => {
+  try {
+      const ID = req.params?.uid ? String(req.params.uid) : false
+      const user = await userDao.getById(ID)
+      const status = await userDao.checkDocStatus(ID)
+      const validUser = ( status.id && status.address && status.accounting ) && user.role === 'user'
+      if ( ID && ID !== req.session.passport.user ) {
+        if ( validUser ) {
+          const response = await userDao.changeRoleById(ID)
+          if ( response ) {
+              req.logger.info(`Role for user ${ID} changed to ${response}!`)
+              detectBrowser(req.get('User-Agent')) ? res.redirect('/') : httpResponse.Ok(res, `Role for user ${ID} changed to ${response}!`)
+          }
+          else
+              return httpResponse.NotFound(res, errorsConstants.USER_NOT_FOUND)
+        } else
+          return httpResponse.WrongInfo(res, `User ID ${ID} needs to have role "user" and upload proper documentation such as "Identification", "Home address certificate" & "Account balance" prior to change to "Premium" role!`)
+      } else return httpResponse.WrongInfo(res, errorsConstants.ID_WRONG)
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+      req.logger.error(error.message)
+  }
+};
+
+export const uploadDocs = async (req, res) => {
+  try {
+      const ID = req.params?.uid ? String(req.params.uid) : false
+      if ( req.file ) {
+        const file = { name: req.body.doctype, reference: req.file.path }
+        const user = await userDao.getById(ID)
+        if ( user ) {
+          user.documents.push( file )
+          user.save()
+          detectBrowser(req.get('User-Agent')) ? res.redirect(`/api/users/${ID}/documents`) : httpResponse.Ok(res, `Upload of documents for user ${ID} finished!`)
+        }
+        else
+            return httpResponse.NotFound(res, errorsConstants.USER_NOT_FOUND)
+      }
+      else
+        detectBrowser(req.get('User-Agent')) ? res.redirect(`/api/users/${ID}/documents`) : httpResponse.WrongInfo(res, 'Upload process incomplete! Please, try again!')
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+      req.logger.error(error.message)
+  }
+};
+
+export const uploadDocsView = async (req, res) => {
+  try {
+      const ID = req.params?.uid ? String(req.params.uid) : false
+        const user = await userDao.getById(ID)
+        const validUser = user && user.role === 'user'
+        const status = await userDao.checkDocStatus(ID)
+        if ( validUser ) {
+          detectBrowser(req.get('User-Agent')) ? res.render('uploads', { ID, status } ) : httpResponse.Ok(res, `Please use the [POST] method at /api/users/${ID}/documents to upload files!`)
+        }
+        else
+            return httpResponse.NotFound(res, errorsConstants.USER_NOT_FOUND)
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+      req.logger.error(error.message)
+  }
 };

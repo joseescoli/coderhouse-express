@@ -1,9 +1,13 @@
 import { Router } from "express";
-import { loginUser, registerUser, githubLogin, passwordReset, passwordForm, password, passwordResetForm } from "../controllers/user.controllers.js"
+import { loginUser, registerUser, githubLogin, passwordReset, passwordForm, password, passwordResetForm, changeRolePremium, uploadDocs, uploadDocsView } from "../controllers/user.controllers.js"
 import passport from "passport";
 
 const router = Router();
 
+// Middlewares involucrados en las vistas
+import { isAuth } from '../middlewares/isAuth.js';
+import access from '../middlewares/endpointRoles.js';
+import { uploader } from "../middlewares/multer.js";
 
 // Registro passport local
 router.post('/register', passport.authenticate('register'), registerUser);
@@ -41,5 +45,13 @@ router.get('/password/change', passwordForm);
 // PUT request con el cambio de contraseña. Esto es luego de superar el formulario o haber pasado por query param la variable token con el correcto recibido por correo
 router.post('/password/change', password);
 
+// Cambio de rol de usuario por ID. El rol se cambia de 'user' a 'premium' o viceversa. (Sólo administradores).
+router.get('/api/users/:uid/premium', isAuth, access('admin'), changeRolePremium);
+
+// GET - Formulario de carga de archivos del tipo imágenes o documentos (Cualquier usuario autenticado).
+router.get('/api/users/:uid/documents', isAuth, uploadDocsView);
+
+// POST - Carga de archivos del tipo imágenes o documentos (Cualquier usuario autenticado).
+router.post('/api/users/:uid/documents', isAuth, uploader.single('files'), uploadDocs);
 
 export default router;

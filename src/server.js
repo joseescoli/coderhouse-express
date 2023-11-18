@@ -1,5 +1,6 @@
 // Configuración general del servidor en variables de entorno
 import config from './config.js';
+process.title = config.APP_TITLE
 
 // Incorporación de winston como logger
 import { logger } from './utils/logger.js';
@@ -7,9 +8,8 @@ import { logger } from './utils/logger.js';
 import { loggerHTTP } from './middlewares/loggerHttp.js';
 
 // Conexión a base de datos MongoDB Atlas
-import { dbConnect, dbDisconnect } from './dao/mongodb/dbconnection.js';
+import { dbConnect } from './dao/mongodb/dbconnection.js';
 dbConnect()
-//dbDisconnect()
 
 // Módulo de sesiones
 import session from 'express-session';
