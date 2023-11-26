@@ -21,5 +21,7 @@ export default {
     SERVER_ERROR: 'Internal server error',
     INFO_INCORRECT: 'Incorrect information',
     USER_NOT_FOUND: 'User not found!',
+    USERS_NOT_FOUND: 'No users found!',
+    USER_NOT_LOGGED: 'User not logged in!',
     NOT_OWNER: 'Premium user is not the product owner. Therefore no changes allowed!'
 }

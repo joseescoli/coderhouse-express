@@ -34,5 +34,6 @@ export default {
     APP_TITLE: process.env.APP_TITLE,
     DEBUG: process.env.DEBUG?.toLowerCase(),
     // En caso de no definirse establecerse por defecto en 1 hora (3600 segundos)
-    RESET_TOKEN_EXPIRATION: process.env.RESET_TOKEN_EXPIRATION || 3600
+    RESET_TOKEN_EXPIRATION: process.env.RESET_TOKEN_EXPIRATION || 3600,
+    DAYS_TO_REMOVE_INACTIVE_USERS: process.env.DAYS_TO_REMOVE_INACTIVE_USERS || 2
 }

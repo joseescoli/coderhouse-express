@@ -9,8 +9,7 @@
             <br><br>
         {{/each}}
         </ul>
-        <label id="cart" data-cart="{{cart}}"></label>
-        <button id="checkout">Checkout</button>
+        <button id="checkout" data-cart="{{cart}}">Checkout</button>
         <br>
         <br>
         {{#if hasPrevPage}}
@@ -33,6 +32,9 @@
             <form action='/profile'>
               <input type='submit' value='User Profile' />
             </form>
+            {{#if admin}}
+                <button onclick="location.href='/api/users'">User ADMIN</button>
+            {{/if}}
             <form action='/logout'>
               <input type='submit' value='Logout' />
             </form>

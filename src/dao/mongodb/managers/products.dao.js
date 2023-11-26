@@ -84,9 +84,33 @@ export default class ProductsDaoMongoDB {
     }
   }
 
+  async getProductByOwner(owner) {
+    try {
+      const response = await productsModel.find({owner})
+      return response;
+    } catch (error) {
+      logger.error(error.message)
+    }
+  }
+
+  async changeProductOwner(owner) {
+    try {
+      const response = await productsModel.find({owner})
+      if (response) {
+        response.forEach( async item => {
+          item.owner = 'admin'
+          await item.save()
+        })
+        return true
+      } else return false
+    } catch (error) {
+      logger.error(error.message)
+    }
+  }
+
   async getProductStockById(id) {
     try {
-      const response = productsModel.find({_id: id}, {stock: 1, _id: 0}).lean()
+      const response = await productsModel.find({_id: id}, {stock: 1, _id: 0}).lean()
       return response
     } catch (error) {
       logger.error(error.message)

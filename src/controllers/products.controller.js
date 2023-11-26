@@ -108,7 +108,7 @@ export const createController = async (req, res) => {
         if ( req.body.thumbnails )
             thumbnails.push(...req.body.thumbnails)
         
-        const product = req.session?.user?.info?.email ?
+        const product = req.session?.user?.info?.role === 'premium' ?
                                                         { title, description, code, price, stock, category, thumbnails, owner: req.session?.user?.info?.email }
                                                         :
                                                         { title, description, code, price, stock, category, thumbnails }

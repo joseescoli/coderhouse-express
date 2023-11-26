@@ -1,14 +1,32 @@
+// Clase de usuarios
 import UserDao from "../dao/mongodb/managers/user.dao.js"
 const userDao = new UserDao();
+
+// Funciones para el manejo de contraseñas
 import { createTokenService, disableTokenService, getTokenByUserService } from "../services/token.service.js"
+import { isValidPassword as isValidToken, createHash, resetToken } from "../utils/utils.js";
+
+// Detección del User-Agent
 import { detectBrowser } from "../utils/utils.js";
+
+// Módulo de respuesta estandarizada y diccionario de errores
 import { HttpResponse } from "../utils/http.responses.js"
 const httpResponse = new HttpResponse()
 import errorsConstants from "../utils/errors/errors.constants.js";
-import { isValidPassword as isValidToken, createHash, resetToken } from "../utils/utils.js";
+
+// Servicio de envío de correos
 import { sendMailEthereal } from "../services/email.services.js";
+
+// Variable ruta absoluta
 import { __dirname } from "../path.js";
 
+// Variables de entorno
+import config from "../config.js";
+
+// Servicio de productos. Cambio de owner de producto a 'admin' y ver producto por ID
+import { changeProdOwnerService, getByIdService } from "../services/products.services.js";
+
+// Declaración de funciones debajo
 export const registerUser = async(req, res) => {
   try {
         req.session.path = req.url
@@ -163,27 +181,95 @@ export const password = async(req, res) => {
     }
 };
 
+export const userList = async (req, res) => {
+  try {
+      const users = await userDao.getall()
+      if ( users ) {
+      const list = users.map( user => {
+        const userObj = user.toObject()
+        userObj.admin = user.role === 'admin'
+        userObj.loggedIn = ( userObj._id.toString() === req.session.passport.user )
+        return userObj
+        })
+        req.logger.info(`Endpoint showing ${users.length} users in DB.`)
+        detectBrowser(req.get('User-Agent')) ? res.render('users', {list}) : httpResponse.Ok(res, list)
+      }
+      else
+        return httpResponse.NotFound(res, errorsConstants.USERS_NOT_FOUND)
+  } catch (error) {
+    return httpResponse.ServerError(res, error.message)
+  }
+};
+
+export const delUserById = async (req, res) => {
+  try {
+    const ID = req.params?.uid ? String(req.params.uid) : false
+    const user = await userDao.getById(ID)
+    if ( user ) {
+      if ( ID && ID !== req.session.passport.user ) {
+        await changeProdOwnerService(user.email)
+        const response = await userDao.deleteById(ID)
+        if ( response ) {
+            req.logger.info(`User ${ID} removed!`)
+            // detectBrowser(req.get('User-Agent')) ? res.redirect('/api/users') : httpResponse.Ok(res, `User ${ID} removed!`)
+            return httpResponse.Ok(res, `User ${ID} removed!`)
+        }
+        else
+          return httpResponse.NotFound(res, errorsConstants.USER_NOT_FOUND)
+      } else return httpResponse.WrongInfo(res, errorsConstants.ID_WRONG)
+    } else
+      return httpResponse.NotFound(res, errorsConstants.USER_NOT_FOUND)
+  } catch (error) {
+    return httpResponse.ServerError(res, error.message)
+  }
+};
+
+export const usersToDelete = async (req, res) => {
+  try {
+      const users = await userDao.getall()
+      const dateNow = new Date()
+      const filterDate = dateNow.setDate(dateNow.getDate() - config.DAYS_TO_REMOVE_INACTIVE_USERS)
+      const usersToRemove = users.filter( user => user.last_connection < filterDate )
+      if ( usersToRemove ) {
+        const IDs = usersToRemove.length === 1 ? usersToRemove._id.toString() : usersToRemove.map( user => user._id.toString())
+        const products = IDs ? await getByIdService(IDs) : false
+        if ( products )
+          products.forEach( async prod => await changeProdOwnerService(prod.owner) )
+        usersToRemove.length === 1 ? await userDao.deleteById(IDs) : await userDao.deleteManyIds(IDs)
+        req.logger.info(`${usersToRemove.length} ${usersToRemove.length === 1 ? 'user' : 'users'} removed!`)
+        usersToRemove.map( async user => await sendMailEthereal( { destination: user.email, service: 'userDeleted', name: user.first_name } ) )
+        detectBrowser(req.get('User-Agent')) ? res.redirect('/api/users') : httpResponse.Ok(res, usersToRemove)
+        // return httpResponse.Ok(res, IDs)
+      } else
+        return httpResponse.NotFound(res, errorsConstants.USERS_NOT_FOUND)
+  } catch (error) {
+    return httpResponse.ServerError(res, error.message)
+  }
+};
+
 export const changeRolePremium = async (req, res) => {
   try {
       const ID = req.params?.uid ? String(req.params.uid) : false
       const user = await userDao.getById(ID)
-      const status = await userDao.checkDocStatus(ID)
-      const validUser = ( status.id && status.address && status.accounting ) && user.role === 'user'
-      if ( ID && ID !== req.session.passport.user ) {
-        if ( validUser ) {
-          const response = await userDao.changeRoleById(ID)
-          if ( response ) {
-              req.logger.info(`Role for user ${ID} changed to ${response}!`)
-              detectBrowser(req.get('User-Agent')) ? res.redirect('/') : httpResponse.Ok(res, `Role for user ${ID} changed to ${response}!`)
-          }
-          else
-              return httpResponse.NotFound(res, errorsConstants.USER_NOT_FOUND)
-        } else
-          return httpResponse.WrongInfo(res, `User ID ${ID} needs to have role "user" and upload proper documentation such as "Identification", "Home address certificate" & "Account balance" prior to change to "Premium" role!`)
-      } else return httpResponse.WrongInfo(res, errorsConstants.ID_WRONG)
+      if ( user && user.role === 'user' ) {
+        const status = await userDao.checkDocStatus(ID)
+        const validUser = ( status.id && status.address && status.accounting )
+        if ( ID && ID !== req.session.passport.user ) {
+          if ( validUser ) {
+            const response = await userDao.changeRoleById(ID)
+            if ( response ) {
+                req.logger.info(`Role for user ${ID} changed to ${response}!`)
+                detectBrowser(req.get('User-Agent')) ? res.redirect('/api/users') : httpResponse.Ok(res, `Role for user ${ID} changed to ${response}!`)
+            }
+            else
+              detectBrowser(req.get('User-Agent')) ? res.redirect(`/api/users`) : httpResponse.NotFound(res, errorsConstants.USER_NOT_FOUND)
+          } else
+            detectBrowser(req.get('User-Agent')) ? res.redirect(`/api/users/${ID}/documents`) : httpResponse.WrongInfo(res, `User ID ${ID} needs to upload proper documentation such as "Identification", "Home address certificate" & "Account balance" prior to change to "Premium" role!`)
+        } else return httpResponse.WrongInfo(res, errorsConstants.ID_WRONG)
+      } else
+        detectBrowser(req.get('User-Agent')) ? res.redirect(`/api/users`) : httpResponse.NotFound(res, errorsConstants.USER_NOT_FOUND)
   } catch (error) {
-      res.status(500).json({ message: error.message });
-      req.logger.error(error.message)
+    return httpResponse.ServerError(res, error.message)
   }
 };
 
@@ -191,12 +277,19 @@ export const uploadDocs = async (req, res) => {
   try {
       const ID = req.params?.uid ? String(req.params.uid) : false
       if ( req.file ) {
+        // Se almacena archivo almacenado desde formulario de subida de archivos en objeto 'file'
         const file = { name: req.body.doctype, reference: req.file.path }
         const user = await userDao.getById(ID)
         if ( user ) {
-          user.documents.push( file )
-          user.save()
-          detectBrowser(req.get('User-Agent')) ? res.redirect(`/api/users/${ID}/documents`) : httpResponse.Ok(res, `Upload of documents for user ${ID} finished!`)
+          const duplicateDoc = user.documents.some( doc => doc.reference === req.file.path )
+          if ( duplicateDoc )
+            return httpResponse.WrongInfo(res, `Document ${req.file.path} already uploaded! Try a different file!`)
+          else {
+            // Se almacena la referencia del archivo subido en el atributo documents del usuario
+            user.documents.push( file )
+            user.save()
+            detectBrowser(req.get('User-Agent')) ? res.redirect(`/api/users/${ID}/documents`) : httpResponse.Ok(res, `Upload of documents for user ${ID} finished!`)
+          }
         }
         else
             return httpResponse.NotFound(res, errorsConstants.USER_NOT_FOUND)
@@ -204,8 +297,7 @@ export const uploadDocs = async (req, res) => {
       else
         detectBrowser(req.get('User-Agent')) ? res.redirect(`/api/users/${ID}/documents`) : httpResponse.WrongInfo(res, 'Upload process incomplete! Please, try again!')
   } catch (error) {
-      res.status(500).json({ message: error.message });
-      req.logger.error(error.message)
+    return httpResponse.ServerError(res, error.message)
   }
 };
 
@@ -213,15 +305,16 @@ export const uploadDocsView = async (req, res) => {
   try {
       const ID = req.params?.uid ? String(req.params.uid) : false
         const user = await userDao.getById(ID)
+        // Se comprueba que el usuario exista y tenga rol 'user'
         const validUser = user && user.role === 'user'
-        const status = await userDao.checkDocStatus(ID)
         if ( validUser ) {
+          // Se almacena el estado de los documentos subidos. La vista quitará de la selección el documento ya subido.
+          const status = await userDao.checkDocStatus(ID)
           detectBrowser(req.get('User-Agent')) ? res.render('uploads', { ID, status } ) : httpResponse.Ok(res, `Please use the [POST] method at /api/users/${ID}/documents to upload files!`)
         }
         else
-            return httpResponse.NotFound(res, errorsConstants.USER_NOT_FOUND)
+          return httpResponse.NotFound(res, errorsConstants.USER_NOT_FOUND)
   } catch (error) {
-      res.status(500).json({ message: error.message });
-      req.logger.error(error.message)
+    return httpResponse.ServerError(res, error.message)
   }
 };

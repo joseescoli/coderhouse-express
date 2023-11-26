@@ -2,11 +2,11 @@ import multer from 'multer';
 import { __dirname } from '../path.js';
 import { mkdirSync } from 'fs'
 
-let folder = __dirname + '/data/'
 
 const storage = multer.diskStorage({
     // Carpeta de destino
     destination: function (req, files, cb) {
+        let folder = __dirname + '/data/'
         const docType = req.body.doctype
         const user = req.params.uid
         switch (docType) {

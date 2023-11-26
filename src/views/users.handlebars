@@ -1,0 +1,71 @@
+<div>
+    <h1>Administrator view</h1>
+    <h2>User list</h2>
+    {{#if list.length}}
+        <h2>Total: {{list.length}}</h2>
+        <style type="text/css">
+            .tg  {border-collapse:collapse;border-color:#9ABAD9;border-spacing:0;}
+            .tg td{background-color:#EBF5FF;border-color:#9ABAD9;border-style:solid;border-width:1px;color:#444;
+            font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
+            .tg th{background-color:#409cff;border-color:#9ABAD9;border-style:solid;border-width:1px;color:#fff;
+            font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+            .tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
+            .tg .tg-0lax{text-align:left;vertical-align:top}
+            </style>
+        <table class="tg">
+        <thead>
+        <tr>
+            <th class="tg-0pky">Mongo ID</th>
+            <th class="tg-0lax">First Name</th>
+            <th class="tg-0lax">Last Name</th>
+            <th class="tg-0lax">Email</th>
+            <th class="tg-0lax">Age</th>
+            <th class="tg-0lax">Role</th>
+            <th class="tg-0lax">Profile PIC</th>
+            <th class="tg-0lax">Last logon/logoff</th>
+            <th class="tg-0lax">Documents</th>
+            <th class="tg-0lax">Remove user?</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#each list}}
+            <tr>
+                <td class="tg-0lax">{{_id}}</td>
+                <td class="tg-0lax">{{first_name}}</td>
+                <td class="tg-0lax">{{last_name}}</td>
+                <td class="tg-0lax">{{email}}</td>
+                <td class="tg-0lax">{{age}}</td>
+                {{#if admin}}
+                    <td class="tg-0lax">{{role}}</td>
+                {{else}}
+                    <td class="tg-0lax">{{role}} <button onclick="location.href='/api/users/{{_id}}/premium'">🖉</button></td>
+                {{/if}}
+                <td class="tg-0lax">
+                    {{#if profileImg}}
+                    <img src="{{profileImg}}" alt="Profile PIC" width="100" height="100">
+                    {{else}}
+                    -
+                    {{/if}}
+                </td>
+                <td class="tg-0lax">{{last_connection}}</td>
+                <td class="tg-0lax">{{documents.length}}</td>
+                {{#if loggedIn}}
+                    <td class="tg-0lax"><strong>[User logged IN...]</strong></td>
+                {{else}}
+                    <td class="tg-0lax"><button id="userDel" data-id="{{_id}}">🗑️</button></td>
+                {{/if}}
+            </tr>
+        {{/each}}
+        </tbody>
+        </table>
+        <br>
+        <br>
+    {{else}}
+        <p>No users created!</p>
+    {{/if}}
+        <br><br><br>
+        <button onclick="location.href='/'">Home</button>
+</div>
+{{!-- https://www.tablesgenerator.com/html_tables --}}
+
+<script src="/users.js"></script>

@@ -1,6 +1,9 @@
 // Incorporación de capa de servicios de Productos
 import { getAllService } from "../services/products.services.js";
 
+import UserDao from "../dao/mongodb/managers/user.dao.js";
+const userDao = new UserDao()
+
 // Incorporación de variables de entorno
 import config from "../config.js";
 
@@ -13,31 +16,26 @@ import errorsConstants from "../utils/errors/errors.constants.js";
 
 export const listAllProdsView = async (req, res) => {
     try {
-
-        // Se valida si el usuario está autenticado
-        if ( req.session?.user?.info ) {
             req.logger.debug(`User ${req.session.user.info.email} logged in!`);
+
+            const cart = ( await userDao.getById(req.session.passport.user) ).cart.toString()
+            if ( req.session.user.info.cart !== cart ) req.session.user.info.cart = cart
 
             const limit = req.query.limit ? Number(req.query.limit) : 2     // Definición de resultados por página
             const page = req.query.page ? Number(req.query.page) : 1        // Definición de página inicial
 
             // Se comprueba que las constantes estén cargadas con números. De lo contrario se arroja advertencia
-            if ( isNaN(limit) || isNaN(page) ) {
-            res.status(400).json({
-                status: 'Error',
-                error: 'limit/page params must be a number!',
-                message: error.message
-            }) } 
+            if ( isNaN(limit) || isNaN(page) )
+                return httpResponse.WrongInfo(res, errorsConstants.LIMIT_PAGE_NUMBER)
             else {
 
                 // Se consulta de la base de datos todos los resultados en propiedad 'products.docs'. El resto de las propiedades retornan estadísticas y paginado
                 const products = await getAllService(limit, page, null, null)
 
-                let url = `http://${req.hostname}:${config.PORT || 8080}/?`
-                //url += req.url
+                let url = `http://${req.hostname}:${config.PORT || 8080}/`
                 
-                let prevLink = (products.hasPrevPage)? `${url + 'page='+products.prevPage}` : null
-                let nextLink = (products.hasNextPage)? `${url + 'page='+products.nextPage}` : null
+                let prevLink = (products.hasPrevPage)? `${url + '?page='+products.prevPage}` : null
+                let nextLink = (products.hasNextPage)? `${url + '?page='+products.nextPage}` : null
 
                 let url2 = ''
                 
@@ -46,8 +44,6 @@ export const listAllProdsView = async (req, res) => {
                 prevLink = prevLink ? prevLink += url2 : null
                 nextLink = nextLink ? nextLink += url2 : null
 
-                //console.log(req.session);
-                
                 if(products.totalDocs){
 
                     const responseObject = {
@@ -61,92 +57,75 @@ export const listAllProdsView = async (req, res) => {
                         hasNextPage: products.hasNextPage?true:false,
                         prevLink: prevLink,
                         nextLink: nextLink,
-                        homeLink: url + 'page=1',
+                        homeLink: url + '?page=1',
                         first_name: req.session.user.info.first_name,
                         last_name: req.session.user.info.last_name,
-                        cart: req.session.user.info.cart
+                        cart: req.session.user.info.cart,
+                        admin: req.session?.user?.info?.role === 'admin'
                     }
 
-                    detectBrowser(req.get('User-Agent')) ? res.render( 'home', responseObject ) : res.json( responseObject )
+                    detectBrowser(req.get('User-Agent')) ? res.render( 'home', responseObject ) : httpResponse.Ok(res, responseObject)
 
-                } else {
-                    res.status(400).json({
-                        status: 'Error',
-                        error: 'Products not found'
-                        //message: error.message
-                    })
-                }
+                } else
+                    return httpResponse.NotFound(res, errorsConstants.PRODS_NOT_FOUND)
             }
-        } else
-            res.redirect('/login')
-        
     } catch (error) {
-        res.status(404).json({ message: error.message });
-        req.logger.error(error.message)
+        return httpResponse.ServerError(res, error.message)
     }
 };
 
 export const listAllApisView = async (req, res) => {
     try {
-        res.status(200).render('apis')
+        detectBrowser(req.get('User-Agent')) ? res.status(200).render('apis') : httpResponse.Ok(res, 'Use /docs endpoint to check the list of endpoints available.')
     } catch (error) {
-        res.status(400).json({ message: error.message });
-        req.logger.error(error.message)
+        return httpResponse.ServerError(res, error.message)
     }
 };
 
 export const currentSession = async (req, res) => {
     try {
         if ( req.session?.user )
-            res.status(200).json({status: 'active', session: req.session.user.info})
+            return httpResponse.Ok(res, req.session.user.info)
         else
-            res.status(401).json({status: 'false', session: 'Not logged in'})
+            return httpResponse.Unauthorized(res, 'Not logged in')
     } catch (error) {
-        res.status(400).json({ message: error.message });
-        req.logger.error(error.message)
+        return httpResponse.ServerError(res, error.message)
     }
 };
 
 export const listAllProdsRealtimeView = async (req, res) => {
     try {
-        res.render('realTimeProducts')
+        detectBrowser(req.get('User-Agent')) ? res.render('realTimeProducts') : httpResponse.WrongInfo(res, 'This endpoint requires an appropriate web browser to use this view!')
     } catch (error) {
-        res.status(404).json({ message: error.message });
-        req.logger.error(error.message)
-    }
+        return httpResponse.ServerError(res, error.message)    }
 };
 
 export const chatView = async (req, res) => {
     try {
         const io = req.app.get("io");
         io.emit('user_logged', req.session.user.info.email);
-        res.render('chat', {layout: 'chat-main', user: req.session.user.info.email})
+        detectBrowser(req.get('User-Agent')) ? res.render('chat', {layout: 'chat-main', user: req.session.user.info.email}) : httpResponse.WrongInfo(res, 'Use an appropriate web browser to use this endpoint!')
     } catch (error) {
-        res.status(404).json({ message: error.message });
-        req.logger.error(error.message)
+        return httpResponse.ServerError(res, error.message)
     }
 };
 
 export const loggerTest = async (req, res) => {
     try {
-        res.status(200).send("Endpoint de pruebas de niveles de logger winston")
         req.logger.debug("Nivel activo winston");
         req.logger.http("Nivel activo winston");
         req.logger.info("Nivel activo winston");
         req.logger.warning("Nivel activo winston");
         req.logger.error("Nivel activo winston");
         req.logger.fatal("Nivel activo winston");
+        return httpResponse.Ok(res, "Endpoint de pruebas de niveles de logger winston")
     } catch (error) {
-        res.status(404).json({ message: error.message });
-        req.logger.error(error.message);
-    }
+        return httpResponse.ServerError(res, error.message)    }
 };
 
 export const pageNotFoundView = async (req, res) => {
     try {
-        detectBrowser(req.get('User-Agent')) ? res.status(404).render('404') : res.status(404).send( '[404] - Page not found!' )
+        detectBrowser(req.get('User-Agent')) ? res.status(404).render('404') : httpResponse.NotFound(res, '[404] - Page not found!')
     } catch (error) {
-        res.status(400).json({ message: error.message });
-        req.logger.error(error.message)
-    }
+        return httpResponse.ServerError(res, error.message)    }
 };
