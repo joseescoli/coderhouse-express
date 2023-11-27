@@ -37,7 +37,7 @@ export const getAllController = async (req, res) => {
             const products = await getAllService(limit, page, sort, query);
 
             // let url = `http://${req.hostname}:${config.PORT || 8080}/api/products?`
-            let url = `${req.headers.host}/api/products?`
+            let url = `${req.protocol}://${req.headers.host}/api/products?`
             //url += req.url
             
             let prevLink = (products.hasPrevPage)? `${url + 'page='+products.prevPage}` : null

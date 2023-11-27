@@ -33,7 +33,7 @@ export const listAllProdsView = async (req, res) => {
                 const products = await getAllService(limit, page, null, null)
 
                 // let url = `http://${req.hostname}:${config.PORT || 8080}/`
-                let url = `${req.headers.host}/`
+                let url = `${req.protocol}://${req.headers.host}/`
                 
                 let prevLink = (products.hasPrevPage)? `${url + '?page='+products.prevPage}` : null
                 let nextLink = (products.hasNextPage)? `${url + '?page='+products.nextPage}` : null
