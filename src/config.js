@@ -35,5 +35,7 @@ export default {
     DEBUG: process.env.DEBUG?.toLowerCase(),
     // En caso de no definirse establecerse por defecto en 1 hora (3600 segundos)
     RESET_TOKEN_EXPIRATION: process.env.RESET_TOKEN_EXPIRATION || 3600,
-    DAYS_TO_REMOVE_INACTIVE_USERS: process.env.DAYS_TO_REMOVE_INACTIVE_USERS || 2
+    DAYS_TO_REMOVE_INACTIVE_USERS: process.env.DAYS_TO_REMOVE_INACTIVE_USERS || 2,
+    SERVER_LOCALHOST: `http://localhost:${process.env.PORT || 8080}`,
+    RAILWAY_APP: 'https://coderhouse-express-production-e90e.up.railway.app'
 }

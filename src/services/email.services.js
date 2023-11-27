@@ -17,15 +17,15 @@ const service = (email) => {
     const emails = [
         {   template:   'reg',
             subject:    'You have been registered to Express Server ECOMMERCE',
-            html:       `<h1>Welcome ${email.name} to Coderhouse</h1><br><p>This email is to confirm your registration to our site Ecommerce http://localhost:8080/</p><p>There, you will be able to check our latest products every day.</p><br></br>`
+            html:       `<h1>Welcome ${email.name} to Coderhouse</h1><br><p>This email is to confirm your registration to our site Ecommerce ${config.RAILWAY_APP}</p><p>There, you will be able to check our latest products every day.</p><br></br>`
         },
         {   template:   'resetPass',
             subject:    'Ecommerce | Password reset request',
             html:       `<h1>Dear ${email.name},</h1><br><br>
-            <p>This email is from the Ecommerce webpage http://localhost:8080/</p>
+            <p>This email is from the Ecommerce webpage ${config.RAILWAY_APP}</p>
             <p>From our site you have requested to reset your password with this email address registered in our database.</p>
             <p>From the link below you will be able to access the RESET Password form site in order to change you password:</p>
-            <p><a href="http://localhost:8080/password/change?token=${email.token}&email=${email.destination}">CLICK HERE</a></p>
+            <p><a href="${config.RAILWAY_APP}/password/change?token=${email.token}&email=${email.destination}">CLICK HERE</a></p>
             <p>In case you have not requested the password reset, please, disregard this email and report this issue to our communication channels in oprder to verify it.</p>
             <br>
             <p>Best regards from Ecommerce site, at your service!,</p>
@@ -35,10 +35,10 @@ const service = (email) => {
         {   template:   'userDeleted',
             subject:    'Ecommerce | User deleted - Account inactive',
             html:       `<h1>Dear ${email.name},</h1><br><br>
-            <p>This email is from the Ecommerce webpage http://localhost:8080/</p>
+            <p>This email is from the Ecommerce webpage ${config.RAILWAY_APP}</p>
             <p>The administrator from our site has removed your account due to inactivity.</p>
             <p>In case you want to create another user click the link below to access our website again in the future:</p>
-            <p><a href="http://localhost:8080/register">CLICK HERE</a></p>
+            <p><a href="${config.RAILWAY_APP}/register">CLICK HERE</a></p>
             <p>You have not logged in to our website more than ${config.DAYS_TO_REMOVE_INACTIVE_USERS} days!</p>
             <p>The account is considered inactive and thus deleted.</p>
             <br>
@@ -49,10 +49,10 @@ const service = (email) => {
         {   template:   'productDeleted',
             subject:    'Ecommerce | Product deleted - Product owner',
             html:       `<h1>Dear ${email.name},</h1><br><br>
-            <p>This email is from the Ecommerce webpage http://localhost:8080/</p>
+            <p>This email is from the Ecommerce webpage ${config.RAILWAY_APP}</p>
             <p>The administrator from our site has removed a product that you were the owner of.</p>
             <p>In case you want to create another product remember to send a POST request to the link below and create another:</p>
-            <p><a href="http://localhost:8080/api/products">CLICK HERE</a></p>
+            <p><a href="${config.RAILWAY_APP}/api/products">CLICK HERE</a></p>
             <p>Details of the product that has been removed from our database:</p>
             <p>${JSON.stringify(email.product)}</p>
             <br>

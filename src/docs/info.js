@@ -1,3 +1,5 @@
+import config from "../config.js";
+
 export const info = {
     definition: {
         openapi: '3.0.0',
@@ -22,8 +24,12 @@ export const info = {
         },
         servers: [
             {
-                url: 'http://localhost:8080',
-                description: 'Development SERVER'
+                url: config.RAILWAY_APP,
+                description: 'Development SERVER',
+            },
+            {
+                url: config.SERVER_LOCALHOST,
+                description: 'Development SERVER localhost'
             }
         ],
         defaultContentType: 'application/json'

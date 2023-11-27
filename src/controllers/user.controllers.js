@@ -20,6 +20,9 @@ import { sendMailEthereal } from "../services/email.services.js";
 // Variable ruta absoluta
 import { __dirname } from "../path.js";
 
+// Borrado de archivos
+import { deleteFilesInDir } from "../utils/utils.js";
+
 // Variables de entorno
 import config from "../config.js";
 
@@ -207,7 +210,11 @@ export const delUserById = async (req, res) => {
     const user = await userDao.getById(ID)
     if ( user ) {
       if ( ID && ID !== req.session.passport.user ) {
+        // Se cambia debajo el producto del que el usuario es owner a 'admin'
         await changeProdOwnerService(user.email)
+        // Borrado de archivos de usuario a eliminar
+        if (user.documents.length > 0)
+          user.documents.map( file => deleteFilesInDir(ID, file.reference) )
         const response = await userDao.deleteById(ID)
         if ( response ) {
             req.logger.info(`User ${ID} removed!`)
@@ -233,8 +240,15 @@ export const usersToDelete = async (req, res) => {
       if ( usersToRemove ) {
         const IDs = usersToRemove.length === 1 ? usersToRemove._id.toString() : usersToRemove.map( user => user._id.toString())
         const products = IDs ? await getByIdService(IDs) : false
-        if ( products )
+        if ( products ) {
+          // Se cambia debajo el o los productos del que el usuario es owner a 'admin'
           products.forEach( async prod => await changeProdOwnerService(prod.owner) )
+          // Borrado de archivos de usuario a eliminar
+          usersToRemove.forEach( user => {
+            if (user.documents.length > 0)
+              user.documents.map( file => deleteFilesInDir(user._id, file.reference) )
+          })
+        }
         usersToRemove.length === 1 ? await userDao.deleteById(IDs) : await userDao.deleteManyIds(IDs)
         req.logger.info(`${usersToRemove.length} ${usersToRemove.length === 1 ? 'user' : 'users'} removed!`)
         usersToRemove.map( async user => await sendMailEthereal( { destination: user.email, service: 'userDeleted', name: user.first_name } ) )

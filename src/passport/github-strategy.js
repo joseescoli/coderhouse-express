@@ -13,7 +13,7 @@ import { sendMailEthereal } from '../services/email.services.js';
 const strategyOptions = {
     clientID: config.GITHUB_CLIENTID,
     clientSecret: config.GITHUB_CLIENTSECRET,
-    callbackURL: `http://localhost:${config.PORT}/github`,
+    callbackURL: '/github',
     scope: ["user:email"]
 };
 

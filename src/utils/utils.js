@@ -5,9 +5,48 @@ import { fakerES as faker } from "@faker-js/faker";
 import { randomBytes } from 'crypto';
 
 import config from '../config.js';
-import { connectionString } from '../dao/mongodb/dbconnection.js';
 
 import { getAllProds, createService } from '../services/products.services.js';
+
+// https://bobbyhadz.com/blog/delete-all-files-in-a-directory-using-node-js
+import { __dirname } from '../path.js';
+import { rmSync } from 'fs';
+
+export const deleteFilesInDir = (id, paths) => {
+    /*
+    Lectura de archivos de directorio y borrado individual
+    readdirSync(paths).forEach( file => {
+        rmSync(__dirname.join(paths, file))
+    })
+    */
+    /*
+    Eliminación de archivos indicados en paths
+    rmSync(paths, {recursive: true, force: true}, err => {
+        if(err) throw err
+    })
+    */
+
+    // Eliminación de carpetas desde carpeta padre y recursivas
+    const folder = `${__dirname}/data/documents/${id}`
+    rmSync(folder, {recursive: true, force: true}, err => {
+        if(err) throw err
+    })
+
+    // Eliminación de carpeta products en caso de haberse subido por el usuario
+    if ( paths.includes('products') ) {
+        const folder = `${__dirname}/data/images/products/${id}`
+        rmSync(folder, {recursive: true, force: true}, err => {
+            if(err) throw err
+        })
+    }
+    // Eliminación de carpeta profiles en caso de haberse subido por el usuario
+    if ( paths.includes('profiles') ) {
+        const folder = `${__dirname}/data/images/profiles/${id}`
+        rmSync(folder, {recursive: true, force: true}, err => {
+            if(err) throw err
+        })
+    }
+}
 
 export const resetToken = async () => randomBytes(32).toString('hex');
 /**
