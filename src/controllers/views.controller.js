@@ -32,7 +32,8 @@ export const listAllProdsView = async (req, res) => {
                 // Se consulta de la base de datos todos los resultados en propiedad 'products.docs'. El resto de las propiedades retornan estadísticas y paginado
                 const products = await getAllService(limit, page, null, null)
 
-                let url = `http://${req.hostname}:${config.PORT || 8080}/`
+                // let url = `http://${req.hostname}:${config.PORT || 8080}/`
+                let url = `${req.headers.host}/`
                 
                 let prevLink = (products.hasPrevPage)? `${url + '?page='+products.prevPage}` : null
                 let nextLink = (products.hasNextPage)? `${url + '?page='+products.nextPage}` : null

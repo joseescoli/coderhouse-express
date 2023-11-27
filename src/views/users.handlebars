@@ -47,7 +47,11 @@
                     -
                     {{/if}}
                 </td>
-                <td class="tg-0lax">{{last_connection}}</td>
+                {{#if last_connection}}
+                    <td class="tg-0lax">{{last_connection}}</td>
+                {{else}}
+                    <td class="tg-0lax">-</td>
+                {{/if}}
                 <td class="tg-0lax">{{documents.length}}</td>
                 {{#if loggedIn}}
                     <td class="tg-0lax"><strong>[User logged IN...]</strong></td>
