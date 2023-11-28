@@ -56,10 +56,10 @@
                     // Muestra mensaje cuando el producto se agrega correctamente
                     if ( response.status === 200 && addProdCart )
                         alert(`Product ${pid} added to cart ID ${cart}!`)
+                    else if ( response.status === 400 && addProdCart )
+                        alert('ERROR:\nMessage: ' + addProdCart.message + '\nError: ' + addProdCart.error)
                     else
                         alert("Invalid operation! Check user role.")
-                        
-
                 } catch (error) {
                     // Mostrar error en caso de encontrarse
                         alert(`Error: ${error}`)

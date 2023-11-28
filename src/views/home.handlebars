@@ -4,9 +4,15 @@
         <h2>Product list - Total {{records}}:</h2>
         <ul>
         {{#each products}}
+            {{#if status}}
             <li>Title: {{title}}<br>Description: {{description}}<br>Stock: {{stock}}<br>Price: {{price}}</li>
             <button class="cartAdd" data-id="{{_id}}">Add product to cart</button>
             <br><br>
+            {{else}}
+            <li>Title: {{title}}<br>Description: {{description}}<br>Stock: {{stock}}<br>Price: {{price}}</li>
+            <p>Product inactive!</p>
+            <br><br>
+            {{/if}}
         {{/each}}
         </ul>
         <button id="checkout" data-cart="{{cart}}">Checkout</button>
