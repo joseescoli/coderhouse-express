@@ -7,6 +7,9 @@ const httpResponse = new HttpResponse()
 import errorsConstants from "../utils/errors/errors.constants.js";
 import config from "../config.js";
 
+import { sendMailEthereal } from "../services/email.services.js";
+
+
 // Ruta TESTING todos los carritos
 export const getAllController = async(req, res) => {
     try {
@@ -256,14 +259,24 @@ export const purchaseController = async(req, res) => {
         }
         else {
             const ticket = { purchaser: req.session.user.info.email, code: cid }
-            const response = await purchaseCartService(ticket);
-            if ( response ) {
-                const data = {
-                    message: `Products from cart purchased! Ticket CODE ${cid} is a reference for your purchase. Keep track or copy it! Total amount: $${response.amount}. An email will be sent with all these information.`,
-                    cart: response.cart
-                }
-                req.logger.debug(data.message)
-                return httpResponse.Purchase(res, data)
+            const amount = await purchaseCartService(ticket);
+            if ( amount ) {
+                const message = `Products from cart purchased! Ticket CODE ${cid} is a reference for your purchase. Keep track or copy it! Total amount: $${amount}. An email will be sent with all these information.`
+                req.logger.debug(message)
+                const productsInCart = ( await getByIdService(cid) ).products
+                const productList = productsInCart.map( prod => {
+                    return {
+                        title: prod.product.title,
+                        description: prod.product.description,
+                        code: prod.product.code,
+                        price: prod.product.price,
+                        category: prod.product.category,
+                        quantity: prod.quantity
+                    }
+                })
+                // Envío de correo resumen con los productos comprados
+                await sendMailEthereal( { destination: req.session.user.info.email, service: 'purchase', name: user.first_name, amount, products: productList } )
+                return httpResponse.Ok(res, message)
             }
             else {
                 return httpResponse.WrongInfo(res, `Cart ID: ${cid} not found or empty`)

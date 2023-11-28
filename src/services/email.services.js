@@ -17,12 +17,15 @@ const service = (email) => {
     const emails = [
         {   template:   'reg',
             subject:    'You have been registered to Express Server ECOMMERCE',
-            html:       `<h1>Welcome ${email.name} to Coderhouse</h1><br><p>This email is to confirm your registration to our site Ecommerce ${config.RAILWAY_APP}</p><p>There, you will be able to check our latest products every day.</p><br></br>`
+            html:       `<h1>Welcome ${email.name} to Coderhouse</h1><br>
+            <p>This email is to confirm your registration to our site Ecommerce <a href="${config.RAILWAY_APP}">LOGIN</a></p>
+            <p>There, you will be able to check our latest products every day.</p>
+            <br></br>`
         },
         {   template:   'resetPass',
             subject:    'Ecommerce | Password reset request',
             html:       `<h1>Dear ${email.name},</h1><br><br>
-            <p>This email is from the Ecommerce webpage ${config.RAILWAY_APP}</p>
+            <p>This email is from the Ecommerce webpage <a href="${config.RAILWAY_APP}">${config.RAILWAY_APP}</a></p>
             <p>From our site you have requested to reset your password with this email address registered in our database.</p>
             <p>From the link below you will be able to access the RESET Password form site in order to change you password:</p>
             <p><a href="${config.RAILWAY_APP}/password/change?token=${email.token}&email=${email.destination}">CLICK HERE</a></p>
@@ -35,7 +38,7 @@ const service = (email) => {
         {   template:   'userDeleted',
             subject:    'Ecommerce | User deleted - Account inactive',
             html:       `<h1>Dear ${email.name},</h1><br><br>
-            <p>This email is from the Ecommerce webpage ${config.RAILWAY_APP}</p>
+            <p>This email is from the Ecommerce webpage <a href="${config.RAILWAY_APP}">${config.RAILWAY_APP}</a></p>
             <p>The administrator from our site has removed your account due to inactivity.</p>
             <p>In case you want to create another user click the link below to access our website again in the future:</p>
             <p><a href="${config.RAILWAY_APP}/register">CLICK HERE</a></p>
@@ -49,12 +52,29 @@ const service = (email) => {
         {   template:   'productDeleted',
             subject:    'Ecommerce | Product deleted - Product owner',
             html:       `<h1>Dear ${email.name},</h1><br><br>
-            <p>This email is from the Ecommerce webpage ${config.RAILWAY_APP}</p>
+            <p>This email is from the Ecommerce webpage <a href="${config.RAILWAY_APP}">${config.RAILWAY_APP}</a></p>
             <p>The administrator from our site has removed a product that you were the owner of.</p>
             <p>In case you want to create another product remember to send a POST request to the link below and create another:</p>
             <p><a href="${config.RAILWAY_APP}/api/products">CLICK HERE</a></p>
             <p>Details of the product that has been removed from our database:</p>
             <p>${JSON.stringify(email.product)}</p>
+            <br>
+            <p>Best regards from Ecommerce site, at your service!,</p>
+            <br><br>
+            `
+        },
+        {   template:   'purchase',
+            subject:    'Ecommerce | Invoice | Products purchased!',
+            html:       `<h1>Dear ${email.name},</h1><br><br>
+            <p>This email is from the Ecommerce webpage <a href="${config.RAILWAY_APP}">${config.RAILWAY_APP}</a></p>
+            <p>We are sending the proper invoice generated for you purchase.</p>
+            <p><strong>TOTAL Spent: U$S${email.amount}!</strong></p>
+            <br>
+            <p>You will find the list of products you adquired below:</p>
+            <ul>
+            ${email.products.map( item => '<li>' + JSON.stringify(item) + '</li>' )}
+            </ul>
+            <p>We hope you enjoy them very much!</p>
             <br>
             <p>Best regards from Ecommerce site, at your service!,</p>
             <br><br>

@@ -21,7 +21,7 @@
                 const purchase = await response.json();
                 // Muestra mensaje cuando se compra el carrito correctamente
                 if ( response.status === 200 && purchase ) {
-                    alert(purchase.message)
+                    alert(purchase.data)
                     location.reload()
                 }
                 else

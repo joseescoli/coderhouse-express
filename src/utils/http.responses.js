@@ -21,14 +21,6 @@ export class HttpResponse {
         });
     };
 
-    Purchase(res, data){
-        return res.status(HttpStatus.OK).json({
-            status: HttpStatus.OK,
-            message: data.message,
-            cart: data.cart
-        });
-    };
-
     WrongInfo(res, data){
         logger.warning(errorsConstants.INFO_INCORRECT)
         return res.status(HttpStatus.WRONG_INFO).json({
