@@ -34,22 +34,26 @@
             {{#if hasNextPage}}
                 <span> || {{nextPage}}</span>
             {{/if}}
-
-            <form action='/profile'>
-              <input type='submit' value='User Profile' />
-            </form>
-            {{#if admin}}
-                <button onclick="location.href='/api/users'">User ADMIN</button>
-            {{/if}}
-            <form action='/logout'>
-              <input type='submit' value='Logout' />
-            </form>
         </div>
     {{else}}
         <h1>Bienvenido, {{first_name}} {{last_name}}</h1>
         <h2>Product list:</h2>
         <p>No products created!</p>
     {{/if}}
+
+    <br><button onclick="location.href='/profile'">User Profile</button>
+    {{#if admin}}
+        <br><button onclick="location.href='/api/users'">User ADMIN</button>
+        <br><button onclick="location.href='/api/carts'">Carts list</button>
+    {{else}}
+        <br><button onclick="location.href='/chat'">Chat</button>
+    {{/if}}
+    <br><button onclick="location.href='/api/sessions/current'">Current active session</button>
+    <br><button onclick="location.href='/realtimeproducts'">Realtime Products list</button>
+    <br><button onclick="location.href='/api/products'">Products list from DB (JSON)</button>
+    <br><button onclick="location.href='/api/products/mockingproducts'">Products list DEMO (JSON)</button>
+    <br><button onclick="location.href='/logout'">Logout</button>
+    <br><br><button onclick="location.href='/docs'">Open API Documentation [Swagger]</button>
 </div>
 
 <script src="/products.js"></script>
