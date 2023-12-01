@@ -58,7 +58,7 @@ export const listAllProdsView = async (req, res) => {
                         hasNextPage: products.hasNextPage?true:false,
                         prevLink: prevLink,
                         nextLink: nextLink,
-                        homeLink: url + '?page=1',
+                        homeLink: url + `?page=1${url2}`,
                         first_name: req.session.user.info.first_name,
                         last_name: req.session.user.info.last_name,
                         cart: req.session.user.info.cart,
