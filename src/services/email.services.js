@@ -72,7 +72,7 @@ const service = (email) => {
             <br>
             <p>You will find the list of products you adquired below:</p>
             <ul>
-            ${email.products.map( item => '<li>' + JSON.stringify(item) + '</li>' )}
+            ${email.products && email.products.map( item => '<li>' + JSON.stringify(item) + '</li>' )}
             </ul>
             <p>We hope you enjoy them very much!</p>
             <br>
